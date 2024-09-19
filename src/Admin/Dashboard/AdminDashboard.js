@@ -4,7 +4,8 @@ import {
   FaUsers,
   FaUserPlus,
   FaRegChartBar ,
-
+  FaUserCheck,
+  FaCalendarCheck
 
 } from "react-icons/fa";
 import { IoHomeOutline } from "react-icons/io5";
@@ -69,8 +70,14 @@ const AdminDashboard = ({ onToggleSidebar }) => {
             </li>
             <li className={`admin-nav-item ${location.pathname === '/admin-attendance' ? 'active' : ''}`}>
               <Link className="nav-link" to="/admin-attendance" onClick={handleNavItemClick}>
-                <FaUsers className="admin-nav-icon" />
+                <FaUserCheck className="admin-nav-icon" />
                 {!collapsed && <span className="link_text">Daily Attendance</span>}
+              </Link>
+            </li>
+            <li className={`admin-nav-item ${location.pathname === '/monthly-attendance' ? 'active' : ''}`}>
+              <Link className="nav-link" to="/monthly-attendance" onClick={handleNavItemClick}>
+                <FaCalendarCheck className="admin-nav-icon" />
+                {!collapsed && <span className="link_text">Monthly Attendance</span>}
               </Link>
             </li>
 

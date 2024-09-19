@@ -48,6 +48,7 @@ const UserTable = () => {
   }, []);
 
 
+
   const generateStaffId = async (role) => {
     const prefix = role === "Employee" ? "EMPID0" :"UNKNOWN";
     

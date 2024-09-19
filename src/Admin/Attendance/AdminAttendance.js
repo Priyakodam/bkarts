@@ -45,6 +45,7 @@ const Attendance = () => {
                 id: doc.id,
                 ...doc.data()
             }));
+            userData.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
             setUsers(userData);
         } catch (error) {
             console.error("Error fetching users data: ", error);

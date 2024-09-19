@@ -50,5 +50,17 @@
   }
   
     
+  .loader-container {
+    position: fixed; /* Use fixed positioning to overlay the loader */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Full viewport width */
+    height: 100vh; /* Full viewport height */
+    display: flex; /* Use flexbox to center content */
+    align-items: center; /* Vertically center */
+    justify-content: center; /* Horizontally center */
+    background-color: rgba(255, 255, 255, 0.8); /* Optional: add a semi-transparent background */
+    z-index: 9999; /* Ensure it's on top of other content */
+  }
   
   

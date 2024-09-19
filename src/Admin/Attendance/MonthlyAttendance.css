@@ -1,0 +1,50 @@
+.monthlyattendance-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+/* Content Area */
+.monthlyattendance-content {
+    flex: 1;
+    padding: 20px;
+    margin-top: 40px;
+    margin-left: 190px;
+    transition: margin-left 0.3s ease;
+}
+
+.monthlyattendance-content.collapsed {
+    margin-left: 60px; /* Adjust based on sidebar width */
+}
+
+
+
+
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .monthlyattendance-content {
+        margin-left: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .monthlyattendance-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+    
+}
+
+@media (max-width: 480px) {
+    .monthlyattendance-container {
+        padding: 10px;
+    }
+
+    .monthlyattendance-content {
+        padding: 10px;
+        margin-top: 20px;
+    }
+    
+    
+}

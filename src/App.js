@@ -13,6 +13,10 @@ import EmployeeProfile from "./Employee/EmployeeProfile/EmployeeProfile";
 import EditProfile from "./Employee/EmployeeProfile/EditProfile";
 import ViewAttendance from "./Employee/Attendance/ViewAttendance";
 import AdminAttendance from "./Admin/Attendance/AdminAttendance";
+import MonthlyAttendance from "./Admin/Attendance/MontlyAttendance";
+
+
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -31,6 +35,7 @@ function App() {
       <Route path="/edit-profile" element={<EditProfile />} />
       <Route path="/e-view-attendance" element={<ViewAttendance />} />
       <Route path="/admin-attendance" element={<AdminAttendance />} />
+      <Route path="/monthly-attendance" element={<MonthlyAttendance />} />
       </Routes>
       {/* <SessionListener/> */}
     </BrowserRouter>

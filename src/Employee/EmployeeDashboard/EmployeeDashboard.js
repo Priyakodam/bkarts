@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from '../../Context/AuthContext';
-import { FaUser,FaUserCheck , FaUsers,FaSignOutAlt, FaClock,FaFileExport ,FaVideo,FaRegCalendarAlt, FaCalendarCheck, FaCalendar, FaFileAlt,  FaBoxes, FaClipboardList    } from "react-icons/fa";
+import { FaUserCheck , FaCalendarCheck,} from "react-icons/fa";
 import "./EmployeeDashboard.css";
 // import Logout from "./LogOut";
 import Profile from "./Profile";
@@ -20,7 +20,7 @@ const EmployeeDashboard = () => {
                 </div>
                 <div className="header-right">
                     <div className="logout-button2">
-                        {/* <Logout /> */}
+                        
                         <Profile/>
                     </div>
                 </div>
@@ -37,7 +37,7 @@ const EmployeeDashboard = () => {
 
                     <li className={`nav-item ${location.pathname === '/e-view-attendance' ? 'active' : ''}`}>
                         <Link className="nav-link" to="/e-view-attendance">
-                            <FaUserCheck className="nav-icon" />
+                            <FaCalendarCheck className="nav-icon" />
                             
                         </Link>
                     </li>
