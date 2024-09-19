@@ -1,0 +1,75 @@
+.attendance-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.attendance-content {
+    flex: 1;
+    padding: 20px;
+    margin-top: 40px;
+    transition: margin-left 0.3s;
+}
+
+.attendance-content.collapsed {
+    margin-left: 200px;
+}
+
+.attendance-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+
+
+@media (max-width: 768px) {
+
+    .attendance-content {
+        padding: 10px;
+    }
+}
+
+
+.attendance-buttons {
+    display: flex;
+  
+    gap: 10px; /* Add some space between buttons */
+}
+
+.checkin-button {
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.checkout-button {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.attendance-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+
+
+  
+

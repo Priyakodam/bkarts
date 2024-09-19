@@ -1,0 +1,215 @@
+/* Main Container */
+.attendance-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  /* Content Area */
+  .attendance-content {
+    flex: 1;
+    padding: 20px;
+    margin-top: 40px;
+    margin-left: 220px;
+    transition: margin-left 0.3s ease;
+  }
+  
+  .attendance-content.collapsed {
+    margin-left: 60px; /* Adjust based on sidebar width */
+  }
+  
+  /* Navigation Buttons */
+  .navigation-buttons {
+    margin-bottom: 20px;
+  }
+  
+  .attendance-search {
+    width: 200px;
+    padding: 10px;
+    border: 2px solid #c7d1e1;
+    border-radius: 7px;
+    outline: none;
+    font-size: 14px;
+    margin-left: 685px;
+    height: 40px;
+    margin-top: 1px;
+    margin-bottom: 0px;
+    color: #9c9c9c;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease;
+  }
+  
+  /* Filter Container */
+  .filter-container {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .filter-container label {
+    margin-right: 10px; /* Adjust the space between label and select */
+    font-size: 14px;
+  }
+  
+  .filter-container select {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  
+  /* Table Styling */
+  .table-container {
+    overflow-x: auto; /* Scrollable table */
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #dee2e6;
+    padding: 12px;
+    text-align: left;
+  }
+  
+  thead {
+    background-color: #f8f9fa;
+  }
+  
+  thead th {
+    border-bottom: 2px solid lightgrey;
+  }
+  
+  /* Pagination */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+  }
+  
+  .pagination a {
+    margin: 0 5px;
+    padding: 8px 16px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  .pagination a.active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .pagination a:hover {
+    background-color: #0056b3;
+    color: white;
+  }
+  
+  /* For large tablets and small desktops */
+  @media (max-width: 1024px) {
+    .attendance-content {
+        margin-left: 150px;
+    }
+  
+    .add-attendance-btn {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+  
+    table {
+        font-size: 14px;
+    }
+  
+    th, td {
+        padding: 10px;
+    }
+  }
+  
+  /* For tablets */
+  @media (max-width: 767px) {
+    .attendance-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+  
+    .attendance-header {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 30px;
+    }
+  
+    .add-attendance-btn {
+        font-size: 12px;
+        padding: 6px 10px;
+        margin-top: 10px;
+    }
+  
+    table {
+        font-size: 13px;
+    }
+  
+    th, td {
+        padding: 8px;
+    }
+    .attendance-pagination{
+      text-align: center;
+  }
+  
+  .attendance-pagination li {
+      margin: 0 -2px;
+      cursor: pointer;
+  }
+   .attendance-search {
+    width: 200px;
+    padding: 10px;
+    border: 2px solid #c7d1e1;
+    border-radius: 7px;
+    outline: none;
+    font-size: 14px;
+    margin-left: 137px;
+    height: 40px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    color: #9c9c9c;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease;
+  }
+  }
+  
+  /* For mobile devices */
+  @media (max-width: 480px) {
+    .attendance-container {
+        padding: 10px;
+    }
+  
+    .attendance-content {
+        padding: 10px;
+        margin-top: 20px;
+    }
+  
+    .add-attendance-btn {
+        font-size: 12px;
+        padding: 5px 8px;
+        margin-top: 10px;
+    }
+  
+    table {
+        font-size: 12px;
+    }
+  
+    th, td {
+        padding: 6px;
+    }
+  
+    /* Ensure table is scrollable on small screens */
+    .table-container {
+        overflow-x: auto;
+    }
+  }
+  
+  
+  
+  
+  

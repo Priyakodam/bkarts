@@ -1,0 +1,78 @@
+.view-attendance-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .view-attendance-content {
+    flex: 1;
+    padding: 20px;
+    margin-top: 40px;
+    transition: margin-left 0.3s;
+  }
+  
+  .view-attendance-content.collapsed {
+    margin-left: 200px; /* Adjust based on sidebar width */
+  }
+
+  @media (max-width: 767px) {
+    .view-attendance-content {
+      padding: 10px;
+    }
+    .Attendance-teacher-pagination{
+      text-align: center;
+  }
+  
+  .Attendance-teacher-pagination li {
+      margin: 0 -2px;
+      cursor: pointer;
+  }
+  }
+  .td{
+   
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+  
+  
+  }
+
+
+  .custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 600px;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.modal-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-top: 10px;
+}
+
+  

@@ -1,0 +1,46 @@
+.profile-picture, .default-profile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    margin-left: -10px;
+}
+
+.default-profile-icon {
+    font-size: 40px; /* Ensure the icon size matches the profile picture */
+    color: #aaa; /* Optional: change the color of the icon */
+}
+
+.Profile-dropdown-menu {
+    position: absolute;
+    top: 50px; /* Adjust this depending on where you want the card */
+    right: 10px;
+    background-color: white;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Creates the card-like shadow */
+    z-index: 100;
+    width: 100px; /* Optional: Adjust the width */
+}
+
+.Profile-dropdown-menu button {
+    display: block;
+    width: 80%; /* Ensure buttons take full width */
+    padding: 10px;
+    /* margin-bottom: 10px; */
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+
+.Profile-dropdown-menu .dropdown-item {
+    text-align: left; 
+}
+
+.Profile-dropdown-menu .dropdown-item:last-child {
+    margin-bottom: 0; 
+}
+

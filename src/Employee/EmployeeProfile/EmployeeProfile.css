@@ -1,0 +1,62 @@
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .profile-content {
+    flex: 1;
+    padding: 20px;
+    margin-top: 40px;
+    transition: margin-left 0.3s;
+  }
+  
+  .profile-content.collapsed {
+    margin-left: 200px; /* Adjust based on sidebar width */
+  }
+  
+  .profile-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    box-sizing: border-box;
+    position: relative;
+  }
+  
+  .profile-card h2 {
+    margin-bottom: 15px;
+  }
+  
+  .edit-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #007bff; /* Adjust color as needed */
+  }
+  
+  .edit-icon:hover {
+    color: #0056b3; /* Adjust color on hover as needed */
+  }
+  
+  @media (max-width: 768px) {
+    .profile-content {
+      padding: 10px;
+    }
+  
+    .profile-card {
+      padding: 55px;
+      margin: 0;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .profile-card {
+      padding: 10px;
+    }
+  }
+  

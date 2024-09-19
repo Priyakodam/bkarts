@@ -1,0 +1,9 @@
+
+.input-register-name, .input-register-email, .input-register-mobileNo, .input-register-role, .input-register-project{
+
+    border-radius: 4px;
+    padding: 10px;
+    width: 100%;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    }

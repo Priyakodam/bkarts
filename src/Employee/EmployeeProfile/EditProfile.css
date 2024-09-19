@@ -1,0 +1,111 @@
+.edit-profile-container {
+    padding: 20px;
+  }
+  
+  .edit-profile-form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+  } */
+  
+
+  .save-button:disabled {
+    background: #ccc;
+  }
+  .image-preview {
+    width: 50px;
+    height: 50px;
+    object-fit: cover; /* Ensures the image fits within the dimensions while preserving its aspect ratio */
+  }
+  
+  
+  .employeeedit-button-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px; 
+  
+  }
+  
+  .cancel-button-editprofile,
+  .save-button-editprofile {
+    padding: 5px 10px; /* Smaller padding for smaller buttons */
+    font-size: 14px; /* Smaller font size */
+    min-width: 70px; /* Ensure buttons are not too wide */
+    border-radius: 4px; /* Optional: Add some border radius */
+  }
+  
+  .cancel-button-editprofile {
+    background-color: #f44336; /* Example: Red background for cancel button */
+    color: white; /* White text */
+  }
+  
+  .save-button-editprofile {
+    background-color: #4caf50; /* Example: Green background for save button */
+    color: white; /* White text */
+  }
+  
+  @media (max-width: 768px) {
+    .employeeedit-button-container {
+      flex-direction: row; 
+    }
+  
+    .cancel-button-editdprofile
+    {
+      width: auto; /* Allow buttons to auto-size */
+    }
+
+
+   
+  }
+  
+
+  @media (max-width: 767px) {
+
+    .save-button-editprofile {
+      margin-left: 190px;
+      padding: 10px 20px;
+      font-size: 16px; /* Smaller font size */
+
+
+
+    }
+
+  }
+
+  @media (max-width: 375px) {
+
+    .save-button-editprofile {
+      margin-left: 164px;
+      padding: 10px 20px;
+      font-size: 14px; /* Smaller font size */
+
+
+    }
+
+  }
