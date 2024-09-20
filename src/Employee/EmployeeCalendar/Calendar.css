@@ -1,0 +1,23 @@
+.calendar-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .calendar-content {
+    flex: 1;
+    padding: 20px;
+    margin-top: 40px;
+    transition: margin-left 0.3s;
+  }
+  
+  .calendar-content.collapsed {
+    margin-left: 200px; /* Adjust based on sidebar width */
+  }
+
+
+  @media (max-width: 767px) {
+    .calendar-content {
+      padding: 10px;
+    }
+}

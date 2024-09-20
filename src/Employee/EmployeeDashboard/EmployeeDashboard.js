@@ -42,6 +42,13 @@ const EmployeeDashboard = () => {
                         </Link>
                     </li>
 
+                    <li className={`nav-item ${location.pathname === '/e-calendar' ? 'active' : ''}`}>
+                        <Link className="nav-link" to="/e-calendar">
+                            <FaCalendarCheck className="nav-icon" />
+                            
+                        </Link>
+                    </li>
+
                     {/* <li className={`nav-item ${location.pathname === '/e-view-attendance' ? 'active' : ''}`}>
                         <Link className="nav-link" to="/e-view-attendance">
                             <FaCalendarCheck className="nav-icon" />

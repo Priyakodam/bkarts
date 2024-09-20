@@ -14,7 +14,9 @@ import EditProfile from "./Employee/EmployeeProfile/EditProfile";
 import ViewAttendance from "./Employee/Attendance/ViewAttendance";
 import AdminAttendance from "./Admin/Attendance/AdminAttendance";
 import MonthlyAttendance from "./Admin/Attendance/MontlyAttendance";
-
+import AddHoliday from "./Admin/Calendar/Calendar";
+import Calendar from "./Employee/EmployeeCalendar/Calendar"
+import Holidays from "./Admin/Calendar/Holidaylist";
 
 
 const queryClient = new QueryClient();
@@ -36,6 +38,9 @@ function App() {
       <Route path="/e-view-attendance" element={<ViewAttendance />} />
       <Route path="/admin-attendance" element={<AdminAttendance />} />
       <Route path="/monthly-attendance" element={<MonthlyAttendance />} />
+      <Route path="/a-calendar" element={<AddHoliday />} />
+      <Route path="/e-calendar" element={<Calendar />} />
+      <Route path="/a-holiday" element={<Holidays />} />
       </Routes>
       {/* <SessionListener/> */}
     </BrowserRouter>
