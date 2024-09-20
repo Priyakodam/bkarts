@@ -47,10 +47,10 @@ function Holidays() {
 
   return (
 <div className="admin-holiday-container">
-  <AdminDashboard />
+  <AdminDashboard  onToggleSidebar={setCollapsed} />
   <div className={`admin-holiday-content ${collapsed ? "collapsed" : ""}`}>
 
-      <h2 className='text-center'>Holidays</h2>
+      <h2 className='text-center'>Holiday Calendar</ h2>
       <div className="col text-end mt-3 mb-3">
       <button className="btn btn-primary" onClick={handleAddLeaveClick}>
         Add Leave

@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   FaUsers,
-  FaUserPlus,
-  FaRegChartBar ,
+  FaRegCalendarAlt ,
   FaUserCheck,
   FaCalendarCheck
 
@@ -83,8 +82,8 @@ const AdminDashboard = ({ onToggleSidebar }) => {
 
             <li className={`admin-nav-item ${location.pathname === '/a-holiday' ? 'active' : ''}`}>
               <Link className="nav-link" to="/a-holiday" onClick={handleNavItemClick}>
-                <FaCalendarCheck className="admin-nav-icon" />
-                {!collapsed && <span className="link_text">Holiday Lists</span>}
+                <FaRegCalendarAlt  className="admin-nav-icon" />
+                {!collapsed && <span className="link_text">Holiday Calendar</span>}
               </Link>
             </li>
 

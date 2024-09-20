@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../FirebaseConfig/Firebaseconfig'; // Adjust the import path
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import AdminDashboard from '../Dashboard/AdminDashboard';
 import './MonthlyAttendance.css';
 import jsPDF from 'jspdf';
@@ -47,15 +47,21 @@ const MonthlyAttendance = () => {
     // Fetch users data
     const fetchUsers = async () => {
         try {
-            const querySnapshot = await getDocs(collection(db, 'users'));
+            // Create a query to fetch users where status is 'verified'
+            const q = query(collection(db, 'users'), where('status', '==', 'Verified'));
+            
+            const querySnapshot = await getDocs(q);
             const userData = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
+            
+            // Sort by createdAt timestamp
             userData.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
+            
             setUsers(userData);
         } catch (error) {
-            console.error("Error fetching users data: ", error);
+            console.error("Error fetching verified users data: ", error);
         }
     };
 
@@ -166,10 +172,10 @@ const MonthlyAttendance = () => {
             <AdminDashboard onToggleSidebar={setCollapsed} />
             <div className={`monthlyattendance-content ${collapsed ? 'collapsed' : ''}`}>
                 <div className="d-flex justify-content-center">
-                    <h1 className='monthlyattendance-heading'>Monthly Attendance for {new Date(currentDate.getFullYear(), parseInt(selectedMonth.split('-')[1], 10) - 1).toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}</h1>
+                    <h2 className='monthlyattendance-heading'>Monthly Attendance for {new Date(currentDate.getFullYear(), parseInt(selectedMonth.split('-')[1], 10) - 1).toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}</h2>
                 </div>
 
-                <div className="d-flex justify-content-center mt-3">
+                <div className="d-flex mt-3">
                    
 
                     <label htmlFor="monthFilter" className="ms-3 me-2">Select Month:</label>

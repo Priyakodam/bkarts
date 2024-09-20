@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from '../../Context/AuthContext';
-import { FaUserCheck , FaCalendarCheck,} from "react-icons/fa";
+import { FaUserCheck , FaCalendarCheck, FaRegCalendarAlt} from "react-icons/fa";
 import "./EmployeeDashboard.css";
 // import Logout from "./LogOut";
 import Profile from "./Profile";
@@ -44,7 +44,7 @@ const EmployeeDashboard = () => {
 
                     <li className={`nav-item ${location.pathname === '/e-calendar' ? 'active' : ''}`}>
                         <Link className="nav-link" to="/e-calendar">
-                            <FaCalendarCheck className="nav-icon" />
+                            <FaRegCalendarAlt className="nav-icon" />
                             
                         </Link>
                     </li>

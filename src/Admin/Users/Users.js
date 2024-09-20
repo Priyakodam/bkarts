@@ -314,7 +314,7 @@ const UserTable = () => {
     <div className='users-container'>
       <AdminDashboard onToggleSidebar={setCollapsed} />
       <div className={`users-content ${collapsed ? 'collapsed' : ''}`}>
-        <h1>Staff</h1>
+      <h2 className='text-center'>Staff</ h2>
         <Form className="my-3">
         <Row className="align-items-center justify-content-between">
   <Col xs="auto" className="my-1">
