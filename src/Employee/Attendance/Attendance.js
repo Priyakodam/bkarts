@@ -49,7 +49,7 @@ const Attendance = () => {
 
   const handleCheckIn = async () => {
     if (!selectedImage) {
-      alert("Please upload an image before checking in.");
+      alert("Please upload an image before checking in."); // Alert if no image is uploaded
       return;
     }
     setIsCheckingIn(true);
@@ -115,7 +115,7 @@ const Attendance = () => {
           const durationSeconds = Math.floor(durationMillis / 1000);
           const durationMinutes = Math.floor(durationSeconds / 60);
           const durationHours = Math.floor(durationMinutes / 60);
-          const formattedDuration = `${durationHours} hours and ${durationMinutes % 60} minutes`;
+          const formattedDuration = `${durationHours} hrs,${durationMinutes % 60} mins`;
 
           // Upload image to Firebase Storage
           const imageRef = ref(storage, `attendance_uploads/${user.uid}/${new Date().toISOString()}_${selectedImage.name}`);

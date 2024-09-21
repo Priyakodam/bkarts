@@ -235,6 +235,7 @@ const AttendanceTable = () => {
                                         <th>Check-In</th>
                                         <th>Check-Out</th>
                                         <th>Duration</th>
+                                        <th>Status</th>
                                         <th>View Details</th>
                                     </tr>
                                 </thead>
@@ -259,8 +260,12 @@ const AttendanceTable = () => {
                                                         || 'N/A'}
                                                 </td>
                                                 <td>
+                                                    {data.statuses
+                                                        || 'N/A'}
+                                                </td>
+                                                <td>
                                                     <button className="btn btn-primary" onClick={() => openModal(data)}>
-                                                        View Details
+                                                        View
                                                     </button>
                                                 </td>
                                             </tr>
