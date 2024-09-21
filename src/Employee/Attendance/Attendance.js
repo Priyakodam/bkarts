@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef  } from "react";
 import EmployeeDashboard from "../EmployeeDashboard/EmployeeDashboard";
 import { useAuth } from "../../Context/AuthContext";
 import { db, storage } from '../../FirebaseConfig/Firebaseconfig'; // Ensure storage is imported
-import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Import storage functions
 import "./Attendance.css";
 import Map from "./Map";
@@ -18,11 +18,12 @@ const Attendance = () => {
   const [checkOutPerformed, setCheckOutPerformed] = useState(false); // To track check-out status
   const [isCheckingIn, setIsCheckingIn] = useState(false); // To manage loading state for check-in
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
-    const fetchAttendanceData = async () => {
-      const attendanceRef = doc(db, 'attendance', user.uid);
-      const attendanceSnap = await getDoc(attendanceRef);
+    const attendanceRef = doc(db, 'attendance', user.uid);
+  
+    const unsubscribe = onSnapshot(attendanceRef, (attendanceSnap) => {
       if (attendanceSnap.exists()) {
         setAttendanceData(attendanceSnap.data());
         const today = formatDate(new Date());
@@ -30,9 +31,13 @@ const Attendance = () => {
           setCheckInPerformed(!!attendanceSnap.data()[today].checkInTime);
           setCheckOutPerformed(!!attendanceSnap.data()[today].checkOutTime);
         }
+      } else {
+        setAttendanceData(null); // Clear data if no document exists
       }
-    };
-    fetchAttendanceData();
+    });
+  
+    // Cleanup the listener on unmount
+    return () => unsubscribe();
   }, [user.uid]);
 
   const handleImageChange = (e) => {
@@ -72,6 +77,7 @@ const Attendance = () => {
 
       setCheckInPerformed(true);
       setSelectedImage(null); // Clear the image after check-in
+      fileInputRef.current.value = "";
       alert("Checked in successfully!");
     } catch (error) {
       console.error("Error recording check-in:", error);
@@ -199,7 +205,7 @@ const Attendance = () => {
       {/* Show image upload only if check-in or check-out is not yet done */}
       {!checkInPerformed || !checkOutPerformed ? (
         <div className="image-upload mt-2">
-          <input type="file" accept="image/*" onChange={handleImageChange} />
+          <input type="file" accept="image/*" onChange={handleImageChange} ref={fileInputRef}  />
         </div>
       ) : null}
 
