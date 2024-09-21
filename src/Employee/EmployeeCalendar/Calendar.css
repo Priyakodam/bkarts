@@ -22,7 +22,7 @@
     }
     .custom-modal-width {
       width: 90%;
-    margin-left: 50px;
+   justify-content: center;
     }
 
 }

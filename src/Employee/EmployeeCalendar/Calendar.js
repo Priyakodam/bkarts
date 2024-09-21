@@ -81,7 +81,7 @@ function Holidays() {
    </Modal.Header>
    <Modal.Body>
      <p><strong>Festival:</strong> {selectedEvent.title}</p>
-     <p><strong>Date:</strong> {formatDate(selectedEvent.start)}</p>
+     <p><strong>Date:</strong>{new Date(selectedEvent.start).toLocaleDateString('en-IN')} </p>
    </Modal.Body>
    <Modal.Footer>
      <Button variant="secondary" onClick={handleCloseModal}>
