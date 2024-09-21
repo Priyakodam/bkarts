@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useAuth } from "../../Context/AuthContext";
-import logo from "../../Img/Company_logo.png";
+import logo from "../../Img/bkarts.jpg";
 import "./Login.css";
 
 const Login = () => {
@@ -91,7 +91,7 @@ const Login = () => {
       <div className="card" style={{ width: '36rem' }}>
         <div className="card-body">
           <div className="text-center mb-4">
-            <img src={logo} alt="Logo" className="mb-2" style={{ width: '250px', height: '100px' }} />
+            <img src={logo} alt="Logo" className="mb-2" style={{ width: '350px', height: '100px' }} />
             <h3>Login</h3>
           </div>
           <form onSubmit={handleLogin}>

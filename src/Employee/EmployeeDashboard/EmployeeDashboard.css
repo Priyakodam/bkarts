@@ -70,6 +70,7 @@
 .nav-icon {
     margin-right: 10px;
     font-size: 24px;
+    
 }
 
 .link_text {
@@ -80,7 +81,8 @@
 }
 
 .nav-item.active .nav-link {
-    background-color: #002855;
+    background-color: #3b89e2;
+    border-radius: 10px;
        
 }
 

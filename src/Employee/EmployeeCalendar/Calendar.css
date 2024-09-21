@@ -20,4 +20,9 @@
     .calendar-content {
       padding: 10px;
     }
+    .custom-modal-width {
+      width: 90%;
+    margin-left: 50px;
+    }
+
 }

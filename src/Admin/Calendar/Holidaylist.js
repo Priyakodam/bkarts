@@ -53,7 +53,7 @@ function Holidays() {
       <h2 className='text-center'>Holidays</h2>
       <div className="col text-end mt-3 mb-3">
       <button className="btn btn-primary" onClick={handleAddLeaveClick}>
-        Add Leave
+        Add Holiday
       </button>
     </div>
       <Calendar

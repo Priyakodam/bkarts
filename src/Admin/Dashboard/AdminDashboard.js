@@ -81,10 +81,18 @@ const AdminDashboard = ({ onToggleSidebar }) => {
               </Link>
             </li>
 
-            <li className={`admin-nav-item ${location.pathname === '/a-holiday' ? 'active' : ''}`}>
-              <Link className="nav-link" to="/a-holiday" onClick={handleNavItemClick}>
+            <li className={`admin-nav-item ${location.pathname === '/a-calendar' ? 'active' : ''}`}>
+              <Link className="nav-link" to="/a-calendar" onClick={handleNavItemClick}>
                 <FaCalendarCheck className="admin-nav-icon" />
                 {!collapsed && <span className="link_text">Holiday Lists</span>}
+              </Link>
+            </li>
+
+            
+            <li className={`admin-nav-item ${location.pathname === '/a-payslip' ? 'active' : ''}`}>
+              <Link className="nav-link" to="/a-payslip" onClick={handleNavItemClick}>
+                <FaCalendarCheck className="admin-nav-icon" />
+                {!collapsed && <span className="link_text">Payslip</span>}
               </Link>
             </li>
 
