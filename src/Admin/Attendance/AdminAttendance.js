@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../FirebaseConfig/Firebaseconfig'; // Adjust the import path
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where} from 'firebase/firestore';
 import AdminDashboard from '../Dashboard/AdminDashboard';
 import './AdminAttendance.css';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
@@ -40,15 +40,21 @@ const Attendance = () => {
 
     const fetchUsers = async () => {
         try {
-            const querySnapshot = await getDocs(collection(db, 'users'));
+            // Create a query to fetch users where status is 'verified'
+            const q = query(collection(db, 'users'), where('status', '==', 'Verified'));
+            
+            const querySnapshot = await getDocs(q);
             const userData = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
+            
+            // Sort by createdAt timestamp
             userData.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
+            
             setUsers(userData);
         } catch (error) {
-            console.error("Error fetching users data: ", error);
+            console.error("Error fetching verified users data: ", error);
         }
     };
 
@@ -204,7 +210,7 @@ const Attendance = () => {
                             size={24}
                         />
                         &nbsp; &nbsp;
-                        <h1 className='attendance-heading'>Attendance for {formatDate(currentDate)}</h1>
+                        <h2 className='attendance-heading'>Attendance for {formatDate(currentDate)}</h2>
                         &nbsp; &nbsp;
                         <FaArrowRight
                             onClick={handleNext}
@@ -215,7 +221,7 @@ const Attendance = () => {
                     </div>
                 </div>
 
-                <div className="filter-container d-flex justify-content-between align-items-center mt-3">
+                <div className="filter-container d-flex  mt-3">
                     <div>
                         <input
                             type="text"
@@ -225,8 +231,8 @@ const Attendance = () => {
                             className="attendance-search"
                         />
                     </div>
-                    
-                    <button className="download-btn" onClick={handleDownloadPDF}>Download PDF</button>
+                    &nbsp; &nbsp;
+                    <button className="btn btn-primary" onClick={handleDownloadPDF}>Download PDF</button>
                 </div>
 
                 <table className="attendance-table">
