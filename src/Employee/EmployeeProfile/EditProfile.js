@@ -19,13 +19,6 @@ const EditProfile = () => {
     address: '',
     profilePic: null,
     profilePicName: '',
-    adharCard: null,
-    adharCardName: '',
-    degreeMarksCard: null,
-    degreeMarksCardName: '',
-    pancard: null,             
-    pancardName: '', 
-    project: '',
   });
   const [initialValues, setInitialValues] = useState({
     dob: '',
@@ -36,13 +29,7 @@ const EditProfile = () => {
     role: '',
     profilePic: null,
     profilePicName: '',
-    adharCard: null,
-    adharCardName: '',
-    degreeMarksCard: null,
-    degreeMarksCardName: '',
-    pancard: null,               
-    pancardName: '', 
-    project: '',
+
   });
   const [uploading, setUploading] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -65,13 +52,13 @@ const EditProfile = () => {
             address: data.address || '',
             profilePic: data.profilePic || null,
             profilePicName: '',
-            adharCard: data.adharCard || null,
-            adharCardName: '',
-            degreeMarksCard: data.degreeMarksCard || null,
-            degreeMarksCardName: '',
-            pancard: data.pancard || null,          
-            pancardName: '',          
-            project: data.project || '', // Corrected key name
+            // adharCard: data.adharCard || null,
+            // adharCardName: '',
+            // degreeMarksCard: data.degreeMarksCard || null,
+            // degreeMarksCardName: '',
+            // pancard: data.pancard || null,          
+            // pancardName: '',          
+            
           };
           setFormValues(fetchedValues);
           setInitialValues(fetchedValues);
@@ -118,9 +105,9 @@ const EditProfile = () => {
   
     try {
       let profilePicURL = formValues.profilePic;
-      let adharCardURL = formValues.adharCard;
-      let degreeMarksCardURL = formValues.degreeMarksCard;
-      let pancardURL = formValues.pancard;
+      // let adharCardURL = formValues.adharCard;
+      // let degreeMarksCardURL = formValues.degreeMarksCard;
+      // let pancardURL = formValues.pancard;
       // Upload profile picture
       if (formValues.profilePic && typeof formValues.profilePic === 'object') {
         const file = formValues.profilePic;
@@ -143,75 +130,75 @@ const EditProfile = () => {
       }
 
       // Upload Adhar Card
-      if (formValues.adharCard && typeof formValues.adharCard === 'object') {
-        const file = formValues.adharCard;
-        const storageRef = ref(storage, `adhar_cards/${user.uid}/${file.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, file);
-        adharCardURL = await new Promise((resolve, reject) => {
-          uploadTask.on(
-            'state_changed',
-            null,
-            reject,
-            async () => {
-              try {
-                resolve(await getDownloadURL(uploadTask.snapshot.ref));
-              } catch (error) {
-                reject(error);
-              }
-            }
-          );
-        });
-      }
+      // if (formValues.adharCard && typeof formValues.adharCard === 'object') {
+      //   const file = formValues.adharCard;
+      //   const storageRef = ref(storage, `adhar_cards/${user.uid}/${file.name}`);
+      //   const uploadTask = uploadBytesResumable(storageRef, file);
+      //   adharCardURL = await new Promise((resolve, reject) => {
+      //     uploadTask.on(
+      //       'state_changed',
+      //       null,
+      //       reject,
+      //       async () => {
+      //         try {
+      //           resolve(await getDownloadURL(uploadTask.snapshot.ref));
+      //         } catch (error) {
+      //           reject(error);
+      //         }
+      //       }
+      //     );
+      //   });
+      // }
 
       // Upload Degree Marks Card
-      if (formValues.degreeMarksCard && typeof formValues.degreeMarksCard === 'object') {
-        const file = formValues.degreeMarksCard;
-        const storageRef = ref(storage, `degree_marks_cards/${user.uid}/${file.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, file);
-        degreeMarksCardURL = await new Promise((resolve, reject) => {
-          uploadTask.on(
-            'state_changed',
-            null,
-            reject,
-            async () => {
-              try {
-                resolve(await getDownloadURL(uploadTask.snapshot.ref));
-              } catch (error) {
-                reject(error);
-              }
-            }
-          );
-        });
-      }
+      // if (formValues.degreeMarksCard && typeof formValues.degreeMarksCard === 'object') {
+      //   const file = formValues.degreeMarksCard;
+      //   const storageRef = ref(storage, `degree_marks_cards/${user.uid}/${file.name}`);
+      //   const uploadTask = uploadBytesResumable(storageRef, file);
+      //   degreeMarksCardURL = await new Promise((resolve, reject) => {
+      //     uploadTask.on(
+      //       'state_changed',
+      //       null,
+      //       reject,
+      //       async () => {
+      //         try {
+      //           resolve(await getDownloadURL(uploadTask.snapshot.ref));
+      //         } catch (error) {
+      //           reject(error);
+      //         }
+      //       }
+      //     );
+      //   });
+      // }
 
-      if (formValues.pancard && typeof formValues.pancard === 'object') {
-        const file = formValues.pancard;
-        const storageRef = ref(storage, `pancards/${user.uid}/${file.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, file);
-        pancardURL = await new Promise((resolve, reject) => {
-          uploadTask.on(
-            'state_changed',
-            null,
-            reject,
-            async () => {
-              try {
-                resolve(await getDownloadURL(uploadTask.snapshot.ref));
-              } catch (error) {
-                reject(error);
-              }
-            }
-          );
-        });
-      }
+      // if (formValues.pancard && typeof formValues.pancard === 'object') {
+      //   const file = formValues.pancard;
+      //   const storageRef = ref(storage, `pancards/${user.uid}/${file.name}`);
+      //   const uploadTask = uploadBytesResumable(storageRef, file);
+      //   pancardURL = await new Promise((resolve, reject) => {
+      //     uploadTask.on(
+      //       'state_changed',
+      //       null,
+      //       reject,
+      //       async () => {
+      //         try {
+      //           resolve(await getDownloadURL(uploadTask.snapshot.ref));
+      //         } catch (error) {
+      //           reject(error);
+      //         }
+      //       }
+      //     );
+      //   });
+      // }
 
 
       // Update profile with URLs of uploaded files and other form values
       await updateProfile({
         ...formValues,
         profilePic: profilePicURL,
-        adharCard: adharCardURL,
-        degreeMarksCard: degreeMarksCardURL,
-        pancard: pancardURL,
+        // adharCard: adharCardURL,
+        // degreeMarksCard: degreeMarksCardURL,
+        // pancard: pancardURL,
       });
 
       alert('Profile updated successfully.');
@@ -278,7 +265,7 @@ const EditProfile = () => {
               readOnly
             />
           </div>
-          <div className="form-group">
+          {/* <div className="form-group">
             <label>Project:</label>
             <input
               type="text"
@@ -286,7 +273,7 @@ const EditProfile = () => {
               value={formValues.project}
               onChange={handleChange}
             />
-          </div>
+          </div> */}
           <div className="form-group">
             <label>Date of Birth:</label>
             <input
@@ -399,7 +386,7 @@ const EditProfile = () => {
 
 
 
-          <div className="form-group">
+          {/* <div className="form-group">
             <label>Upload Aadhaar Card:
               {formValues.adharCard && (
 
@@ -412,7 +399,7 @@ const EditProfile = () => {
               accept="image/*,application/pdf"
               onChange={handleChange}
             />
-          </div>
+          </div> */}
 
           {/* <div className="form-group">
             <label>Pancard:</label>
@@ -429,7 +416,7 @@ const EditProfile = () => {
             />
           </div> */}
 
-          <div className="form-group">
+          {/* <div className="form-group">
             <label>Upload PAN Card:
               {formValues.pancard && (
 
@@ -442,7 +429,7 @@ const EditProfile = () => {
               accept="image/*,application/pdf"
               onChange={handleChange}
             />
-          </div>
+          </div> */}
 
 
           {/* <div className="form-group">
@@ -460,7 +447,7 @@ const EditProfile = () => {
             />
           </div> */}
 
-          <div className="form-group">
+          {/* <div className="form-group">
             <label>Degree Marks Card:
               {formValues.degreeMarksCard && (
 
@@ -473,7 +460,7 @@ const EditProfile = () => {
               accept="image/*,application/pdf"
               onChange={handleChange}
             />
-          </div>
+          </div> */}
           
           <div>
             <div className='employeeedit-button-container '>
