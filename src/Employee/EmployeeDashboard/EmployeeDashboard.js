@@ -5,7 +5,7 @@ import { FaUserCheck , FaCalendarCheck, FaRegCalendarAlt} from "react-icons/fa";
 import "./EmployeeDashboard.css";
 // import Logout from "./LogOut";
 import Profile from "./Profile";
-import logo from "../../Img/Company_logo.png";
+import logo from "../../Img/bkarts.jpg";
 
 
 const EmployeeDashboard = () => {
@@ -16,7 +16,7 @@ const EmployeeDashboard = () => {
         <>
             <div className="header">
                 <div className="header-left">
-                    <img src={logo} alt="Logo" className="company-logo" />
+                    <img src={logo} alt="Logo" className="company-logo"  />
                 </div>
                 <div className="header-right">
                     <div className="logout-button2">

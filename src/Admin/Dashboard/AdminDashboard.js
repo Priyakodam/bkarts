@@ -10,7 +10,7 @@ import {
 import { IoHomeOutline } from "react-icons/io5";
 import "./AdminDashboard.css";
 import Logout from "./LogOut";
-import logo from "../../Img/Company_logo.png";
+import logo from "../../Img/bkarts.jpg";
 
 const AdminDashboard = ({ onToggleSidebar }) => {
   const [collapsed, setCollapsed] = useState(false);
