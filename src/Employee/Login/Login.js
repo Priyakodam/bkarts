@@ -91,7 +91,7 @@ const Login = () => {
       <div className="card" style={{ width: '36rem' }}>
         <div className="card-body">
           <div className="text-center mb-4">
-            <img src={logo} alt="Logo" className="mb-2" style={{ width: '350px', height: '100px' }} />
+            <img src={logo} alt="Logo" className="mb-2" style={{ width: '300px', height: '100px' }} />
             <h3>Login</h3>
           </div>
           <form onSubmit={handleLogin}>

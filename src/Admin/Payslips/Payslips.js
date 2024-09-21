@@ -3,7 +3,8 @@ import { db } from '../../FirebaseConfig/Firebaseconfig'; // Adjust the import p
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 import AdminDashboard from '../Dashboard/AdminDashboard';
 import { ThreeDots } from 'react-loader-spinner';
-import { format } from 'date-fns'; // To format dates
+import { format } from 'date-fns';
+import "./Payslips.css" // To format dates
 
 const Payslips = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -153,9 +154,9 @@ const Payslips = () => {
     }
 
     return (
-        <div className='payslips-container'>
+        <div className='admin-payslips-container'>
             <AdminDashboard onToggleSidebar={setCollapsed} />
-            <div className={`payslips-content ${collapsed ? 'collapsed' : ''}`}>
+            <div className={`admin-payslips-content ${collapsed ? 'collapsed' : ''}`}>
                 <h1 className='payslips-heading'>Payslips</h1>
 
                 {/* Dropdown to select Employee ID */}
