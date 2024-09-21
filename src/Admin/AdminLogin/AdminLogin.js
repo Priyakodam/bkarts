@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { auth } from "../../FirebaseConfig/Firebaseconfig"
-import logo from "../../Img/Company_logo.png" 
+import logo from "../../Img/bkarts.jpg" 
 import "./AdminLogin.css";
 
 
@@ -47,7 +47,7 @@ const Login = () => {
       <div className="card" style={{ width: '36rem' }}>
         <div className="card-body">
           <div className="text-center">
-            <img src={logo} alt="Logo" className="mb-2" style={{ width: '250px', height: '100px' }} />
+            <img src={logo} alt="Logo" className="mb-2" style={{ width: '350px', height: '100px' }} />
             <h3>Login</h3>
           </div>
           <form onSubmit={handleLogin}>

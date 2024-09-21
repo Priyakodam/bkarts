@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "bkarts-11"
-  }
+    "default": "bkarts-11",
+    "bkarts": "bkarts-11"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }
