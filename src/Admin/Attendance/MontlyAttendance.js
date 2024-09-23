@@ -3,10 +3,7 @@ import { db } from '../../FirebaseConfig/Firebaseconfig'; // Adjust the import p
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import AdminDashboard from '../Dashboard/AdminDashboard';
 import './MonthlyAttendance.css';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 import { ThreeDots } from 'react-loader-spinner';
-
 
 const MonthlyAttendance = () => {
     // Utility functions
@@ -18,8 +15,14 @@ const MonthlyAttendance = () => {
 
     const getMonthDates = (year, month) => {
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-        return Array.from({ length: daysInMonth }, (_, i) => new Date(year, month, i + 1));
+        const today = new Date(); // Current date
+    
+        return Array.from({ length: daysInMonth }, (_, i) => {
+            const date = new Date(year, month, i + 1);
+            return date;
+        });
     };
+    
 
     const formatDateForKey = (date) => {
         const day = String(date.getDate()).padStart(2, '0');
@@ -28,13 +31,25 @@ const MonthlyAttendance = () => {
         return `${day}-${month}-${year}`;
     };
 
-    const getAttendanceStatus = (userAttendance, dateKey) => {
+    const getAttendanceStatus = (userAttendance, dateKey, date) => {
+        const today = new Date();
+        
+        // If the date is in the future, return an empty string
+        
+        if (date > today) {
+            return ''; // Future days will be left blank
+        }
+    
         const dayAttendance = userAttendance[dateKey];
         if (dayAttendance && dayAttendance.statuses === 'Present') {
             return 'P'; // 'P' for Present
-        } 
-        // return 'A'; 
+        } else if (date.getDay() === 0) {
+            return 'H'; // 'H' for Holiday (Sunday)
+        } else {
+            return 'A'; // 'A' for Absent
+        }
     };
+    
 
     // Component state
     const [collapsed, setCollapsed] = useState(false);
@@ -43,22 +58,18 @@ const MonthlyAttendance = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedRole, setSelectedRole] = useState('All'); // State to hold the selected role
     const [selectedMonth, setSelectedMonth] = useState(getFormattedMonth(new Date())); // State to hold the selected month
+    const [loading, setLoading] = useState(true); 
 
     // Fetch users data
     const fetchUsers = async () => {
         try {
-            // Create a query to fetch users where status is 'verified'
             const q = query(collection(db, 'users'), where('status', '==', 'Verified'));
-            
             const querySnapshot = await getDocs(q);
             const userData = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
-            
-            // Sort by createdAt timestamp
             userData.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
-            
             setUsers(userData);
         } catch (error) {
             console.error("Error fetching verified users data: ", error);
@@ -82,6 +93,7 @@ const MonthlyAttendance = () => {
     useEffect(() => {
         fetchUsers();
         fetchAttendance();
+        setLoading(false);
     }, []);
 
     const processMonthlyAttendanceData = () => {
@@ -89,83 +101,62 @@ const MonthlyAttendance = () => {
         const month = parseInt(selectedMonth.split('-')[1], 10) - 1; // Convert to 0-based month
         const monthDates = getMonthDates(year, month);
         const dateKeys = monthDates.map(formatDateForKey);
-
+    
         const filteredUsers = selectedRole === 'All' ? users : users.filter(user => user.role === selectedRole);
-
-        return filteredUsers.map(user => {
+    
+        // This flag will check if there's any attendance data for the selected month
+        let isAttendanceDataAvailable = false;
+    
+        const processedData = filteredUsers.map(user => {
             const userAttendance = attendanceData.find(entry => entry.id === user.id) || {};
             let totalPresent = 0;
-            const dailyStatuses = dateKeys.map(dateKey => {
-                const status = getAttendanceStatus(userAttendance, dateKey);
+            const dailyStatuses = dateKeys.map((dateKey, index) => {
+                const status = getAttendanceStatus(userAttendance, dateKey, monthDates[index]);
                 if (status === 'P') totalPresent++; // Count only 'P' as Present
+                // If any attendance data is found, set the flag to true
+                if (status !== 'A' && status !== 'H') {
+                    isAttendanceDataAvailable = true;
+                }
                 return status;
             });
-
+    
             return {
                 ...user,
                 dailyStatuses,
                 totalPresent
             };
         });
+    
+        // If no attendance data is available for the selected month, return an empty array
+        if (!isAttendanceDataAvailable) {
+            return []; // This triggers the "No data found" message
+        }
+    
+        return processedData;
     };
+    
 
     const monthlyData = processMonthlyAttendanceData();
-
-    const handleDownloadPDF = () => {
-        const doc = new jsPDF();
-        const monthName = new Date(currentDate.getFullYear(), parseInt(selectedMonth.split('-')[1], 10) - 1).toLocaleString('default', { month: 'long' });
-        doc.text(`Monthly Attendance Report - ${monthName} ${currentDate.getFullYear()}`, 14, 10);
-
-        const tableColumn = ["User Name", ...getMonthDates(currentDate.getFullYear(), parseInt(selectedMonth.split('-')[1], 10) - 1).map(date => date.getDate().toString().padStart(2, '0')), "Total Present"];
-        const tableRows = [];
-
-        monthlyData.forEach(user => {
-            const rowData = [
-                user.name || 'N/A',
-                ...user.dailyStatuses,
-                user.totalPresent || 0
-            ];
-            tableRows.push(rowData);
-        });
-
-        doc.autoTable(tableColumn, tableRows, { startY: 20 });
-        doc.save(`Monthly_Attendance_Report_${selectedMonth}_${currentDate.getFullYear()}.pdf`);
-    };
 
     // Get current year and month for the max date attribute
     const currentYear = currentDate.getFullYear();
     const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
     const maxMonth = `${currentYear}-${currentMonth}`;
 
-
-    const [loading, setLoading] = useState(true); 
-
-    useEffect(() => {
-        const fetchData = async () => {
-          // Simulate a network request
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          setLoading(false); // Set loading to false after data is fetched
-        };
-    
-        fetchData();
-      }, []);
-    
-      if (loading) {
+    if (loading) {
         return (
-          <div className="loader-container">
-            <ThreeDots 
-              height="80" 
-              width="80" 
-              radius="9"
-              color="#00BFFF"
-              ariaLabel="three-dots-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
-          </div>
+            <div className="loader-container">
+                <ThreeDots 
+                    height="80" 
+                    width="80" 
+                    radius="9"
+                    color="#00BFFF"
+                    ariaLabel="three-dots-loading"
+                    visible={true}
+                />
+            </div>
         );
-      }
+    }
 
     return (
         <div className='monthlyattendance-container'>
@@ -174,10 +165,8 @@ const MonthlyAttendance = () => {
                 <div className="d-flex justify-content-center">
                     <h2 className='monthlyattendance-heading'>Monthly Attendance for {new Date(currentDate.getFullYear(), parseInt(selectedMonth.split('-')[1], 10) - 1).toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}</h2>
                 </div>
-
+    
                 <div className="d-flex mt-3">
-                   
-
                     <label htmlFor="monthFilter" className="ms-3 me-2">Select Month:</label>
                     <input 
                         type="month" 
@@ -187,7 +176,7 @@ const MonthlyAttendance = () => {
                         max={maxMonth} // Disable future months
                     />
                 </div>
-
+    
                 <div className="table-responsive mt-3">
                     <table className="table table-striped">
                         <thead>
@@ -200,27 +189,39 @@ const MonthlyAttendance = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {monthlyData.length > 0 ? (
-                                monthlyData.map((user, index) => (
-                                    <tr key={index}>
-                                        <td>{user.name || 'N/A'}</td>
-                                        {user.dailyStatuses.map((status, dayIndex) => (
-                                            <td key={dayIndex}>{status}</td>
-                                        ))}
-                                        <td>{user.totalPresent}</td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={getMonthDates(currentDate.getFullYear(), parseInt(selectedMonth.split('-')[1], 10) - 1).length + 2}>No data available</td>
-                                </tr>
-                            )}
-                        </tbody>
+    {monthlyData.length > 0 ? (
+        monthlyData.map((user, index) => (
+            <tr key={index}>
+                <td>{user.name || 'N/A'}</td>
+                {user.dailyStatuses.map((status, dayIndex) => (
+                    <td 
+                    key={dayIndex} 
+                    style={{
+                        color: status === 'P' ? 'green' : status === 'A' ? 'red' : 'purple',fontWeight: 'bold',
+                        // Text color for better contrast
+                    }}
+                >
+                    {status}
+                </td>
+                ))}
+                <td>{user.totalPresent}</td>
+            </tr>
+        ))
+    ) : (
+        <tr>
+            <td colSpan={getMonthDates(currentDate.getFullYear(), parseInt(selectedMonth.split('-')[1], 10) - 1).length + 2}>
+                No data found
+            </td>
+        </tr>
+    )}
+</tbody>
+
                     </table>
                 </div>
             </div>
         </div>
     );
+    
 };
 
 export default MonthlyAttendance;
