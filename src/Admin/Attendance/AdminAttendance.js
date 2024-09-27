@@ -243,10 +243,10 @@ const Attendance = () => {
                             <th>Role</th>
                             <th>Check-In Time</th>
                             <th>Check-In Location</th>
-                            <th>Check-In Image</th>
+                            {/* <th>Check-In Image</th> */}
                             <th>Check-Out Time</th>
                             <th>Check-Out Location</th>
-                            <th>Check-Out Image</th>
+                            {/* <th>Check-Out Image</th> */}
                             <th>Status</th>
                             <th>Duration</th>
                         </tr>
@@ -259,22 +259,22 @@ const Attendance = () => {
                                 <td>{user.role || 'N/A'}</td>
                                 <td>{user.checkInTime || 'N/A'}</td>
                                 <td>{user.checkInLocation || 'N/A'}</td>
-                                <td>
+                                {/* <td>
                                     {user.checkInImageUrl ? (
                                         <a href={user.checkInImageUrl} target="_blank" rel="noopener noreferrer" className="checkin-image-link">
                                             View Image
                                         </a>
                                     ) : 'N/A'}
-                                </td>
+                                </td> */}
                                 <td>{user.checkOutTime || 'N/A'}</td>
                                 <td>{user.checkOutLocation || 'N/A'}</td>
-                                <td>
+                                {/* <td>
                                     {user.checkOutImageUrl ? (
                                         <a href={user.checkOutImageUrl} target="_blank" rel="noopener noreferrer" className="checkout-image-link">
                                             View Image
                                         </a>
                                     ) : 'N/A'}
-                                </td>
+                                </td> */}
                                 <td>{user.statuses || 'N/A'}</td>
                                 <td>{user.duration || 'N/A'}</td>
                             </tr>

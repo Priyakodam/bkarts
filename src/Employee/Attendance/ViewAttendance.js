@@ -294,15 +294,15 @@ const AttendanceTable = () => {
                             <h2>Details</h2>
                             <p><strong>Check-In Location:</strong> {selectedDetails.checkInLocation || 'N/A'}</p>
                             <p><strong>Check-Out Location:</strong> {selectedDetails.checkOutLocation || 'N/A'}</p>
-                            <p><strong>Check-In Image: </strong>
+                            {/* <p><strong>Check-In Image: </strong>
 <a href={selectedDetails.checkInImageUrl} target="_blank" rel="noopener noreferrer" className="checkin-image-link"
 style={{textDecoration:"none"}}>
                 View Image
-              </a></p>
-              <p><strong>Check-Out Image: </strong>
+              </a></p> */}
+              {/* <p><strong>Check-Out Image: </strong>
 <a href={selectedDetails.checkOutImageUrl} target="_blank" rel="noopener noreferrer" className="checkin-image-link" style={{textDecoration:"none"}}>
                 View Image
-              </a></p>
+              </a></p> */}
                         </div>
                     </div>
                 )}

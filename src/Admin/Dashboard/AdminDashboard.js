@@ -97,12 +97,12 @@ const AdminDashboard = ({ onToggleSidebar }) => {
             </li> */}
 
             
-            {/* <li className={`admin-nav-item ${location.pathname === '/a-payslip' ? 'active' : ''}`}>
+            <li className={`admin-nav-item ${location.pathname === '/a-payslip' ? 'active' : ''}`}>
               <Link className="nav-link" to="/a-payslip" onClick={handleNavItemClick}>
                 <FaCalendarCheck className="admin-nav-icon" />
                 {!collapsed && <span className="link_text">Payslip</span>}
               </Link>
-            </li> */}
+            </li>
 
 
           </ul>
