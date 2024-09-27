@@ -23,7 +23,6 @@ const MonthlyAttendance = () => {
         });
     };
 
-
     const formatDateForKey = (date) => {
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -35,9 +34,13 @@ const MonthlyAttendance = () => {
         const today = new Date();
 
         // If the date is in the future, return an empty string
-
         if (date > today) {
             return ''; // Future days will be left blank
+        }
+
+        // Check if the date is a holiday
+        if (holidays.some(holiday => holiday.date === dateKey)) {
+            return 'F'; // 'F' for Festival
         }
 
         const dayAttendance = userAttendance[dateKey];
@@ -50,11 +53,11 @@ const MonthlyAttendance = () => {
         }
     };
 
-
     // Component state
     const [collapsed, setCollapsed] = useState(false);
     const [users, setUsers] = useState([]);
     const [attendanceData, setAttendanceData] = useState([]);
+    const [holidays, setHolidays] = useState([]); // State to hold holiday data
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedRole, setSelectedRole] = useState('All'); // State to hold the selected role
     const [selectedMonth, setSelectedMonth] = useState(getFormattedMonth(new Date())); // State to hold the selected month
@@ -90,9 +93,21 @@ const MonthlyAttendance = () => {
         }
     };
 
+    // Fetch holiday data
+    const fetchHolidays = async () => {
+        try {
+            const querySnapshot = await getDocs(collection(db, 'holidays'));
+            const holidaysData = querySnapshot.docs.map(doc => doc.data());
+            setHolidays(holidaysData);
+        } catch (error) {
+            console.error("Error fetching holidays data: ", error);
+        }
+    };
+
     useEffect(() => {
         fetchUsers();
         fetchAttendance();
+        fetchHolidays();
         setLoading(false);
     }, []);
 
@@ -114,7 +129,7 @@ const MonthlyAttendance = () => {
                 const status = getAttendanceStatus(userAttendance, dateKey, monthDates[index]);
                 if (status === 'P') totalPresent++; // Count only 'P' as Present
                 // If any attendance data is found, set the flag to true
-                if (status !== 'A' && status !== 'H') {
+                if (status !== 'A' && status !== 'H' && status !== 'F') {
                     isAttendanceDataAvailable = true;
                 }
                 return status;
@@ -134,7 +149,6 @@ const MonthlyAttendance = () => {
 
         return processedData;
     };
-
 
     const monthlyData = processMonthlyAttendanceData();
 
@@ -197,8 +211,8 @@ const MonthlyAttendance = () => {
                                             <td
                                                 key={dayIndex}
                                                 style={{
-                                                    color: status === 'P' ? 'green' : status === 'A' ? 'red' : 'purple', fontWeight: 'bold',
-                                                    // Text color for better contrast
+                                                    color: status === 'P' ? 'green' : status === 'A' ? 'red' : status === 'F' ? 'blue' : 'purple',
+                                                    fontWeight: 'bold',
                                                 }}
                                             >
                                                 {status}
@@ -221,7 +235,6 @@ const MonthlyAttendance = () => {
             </div>
         </div>
     );
-
 };
 
 export default MonthlyAttendance;
