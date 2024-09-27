@@ -33,6 +33,15 @@ function AddHoliday() {
     fetchHolidays();
   }, []);
 
+  // Function to format date as DD-MM-YYYY
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!date || !day || !festival) {
@@ -42,7 +51,8 @@ function AddHoliday() {
 
     setIsAdding(true);
 
-    const data = { date, day, festival };
+    const formattedDate = formatDate(date); // Format the date before saving
+    const data = { date: formattedDate, day, festival };
 
     try {
       if (isEditMode) {
@@ -75,7 +85,7 @@ function AddHoliday() {
   };
 
   const handleEdit = (holiday) => {
-    setDate(holiday.date);
+    setDate(holiday.date.split('-').reverse().join('-')); // Convert DD-MM-YYYY to YYYY-MM-DD for input field
     setDay(holiday.day);
     setFestival(holiday.festival);
     setIsEditMode(true);
@@ -164,17 +174,17 @@ function AddHoliday() {
               <tbody>
                 {currentHolidays.map((holiday) => (
                   <tr key={holiday.id}>
-                    <td>{holiday.date}</td>
+                    <td>{holiday.date}</td> {/* Display date in DD-MM-YYYY format */}
                     <td>{holiday.day}</td>
                     <td>{holiday.festival}</td>
                     <td>
-  <Button variant="info" size="sm" onClick={() => handleEdit(holiday)}>
-    <FaEdit /> {/* Edit icon */}
-  </Button>{' '}
-  <Button variant="danger" size="sm" onClick={() => handleDelete(holiday.id)}>
-    <FaTrashAlt /> {/* Delete icon */}
-  </Button>
-</td>
+                      <Button variant="info" size="sm" onClick={() => handleEdit(holiday)}>
+                        <FaEdit /> {/* Edit icon */}
+                      </Button>{' '}
+                      <Button variant="danger" size="sm" onClick={() => handleDelete(holiday.id)}>
+                        <FaTrashAlt /> {/* Delete icon */}
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
