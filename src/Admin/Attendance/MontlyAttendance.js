@@ -16,13 +16,13 @@ const MonthlyAttendance = () => {
     const getMonthDates = (year, month) => {
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const today = new Date(); // Current date
-    
+
         return Array.from({ length: daysInMonth }, (_, i) => {
             const date = new Date(year, month, i + 1);
             return date;
         });
     };
-    
+
 
     const formatDateForKey = (date) => {
         const day = String(date.getDate()).padStart(2, '0');
@@ -33,13 +33,13 @@ const MonthlyAttendance = () => {
 
     const getAttendanceStatus = (userAttendance, dateKey, date) => {
         const today = new Date();
-        
+
         // If the date is in the future, return an empty string
-        
+
         if (date > today) {
             return ''; // Future days will be left blank
         }
-    
+
         const dayAttendance = userAttendance[dateKey];
         if (dayAttendance && dayAttendance.statuses === 'Present') {
             return 'P'; // 'P' for Present
@@ -49,7 +49,7 @@ const MonthlyAttendance = () => {
             return 'A'; // 'A' for Absent
         }
     };
-    
+
 
     // Component state
     const [collapsed, setCollapsed] = useState(false);
@@ -58,7 +58,7 @@ const MonthlyAttendance = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedRole, setSelectedRole] = useState('All'); // State to hold the selected role
     const [selectedMonth, setSelectedMonth] = useState(getFormattedMonth(new Date())); // State to hold the selected month
-    const [loading, setLoading] = useState(true); 
+    const [loading, setLoading] = useState(true);
 
     // Fetch users data
     const fetchUsers = async () => {
@@ -101,12 +101,12 @@ const MonthlyAttendance = () => {
         const month = parseInt(selectedMonth.split('-')[1], 10) - 1; // Convert to 0-based month
         const monthDates = getMonthDates(year, month);
         const dateKeys = monthDates.map(formatDateForKey);
-    
+
         const filteredUsers = selectedRole === 'All' ? users : users.filter(user => user.role === selectedRole);
-    
+
         // This flag will check if there's any attendance data for the selected month
         let isAttendanceDataAvailable = false;
-    
+
         const processedData = filteredUsers.map(user => {
             const userAttendance = attendanceData.find(entry => entry.id === user.id) || {};
             let totalPresent = 0;
@@ -119,22 +119,22 @@ const MonthlyAttendance = () => {
                 }
                 return status;
             });
-    
+
             return {
                 ...user,
                 dailyStatuses,
                 totalPresent
             };
         });
-    
+
         // If no attendance data is available for the selected month, return an empty array
         if (!isAttendanceDataAvailable) {
             return []; // This triggers the "No data found" message
         }
-    
+
         return processedData;
     };
-    
+
 
     const monthlyData = processMonthlyAttendanceData();
 
@@ -146,9 +146,9 @@ const MonthlyAttendance = () => {
     if (loading) {
         return (
             <div className="loader-container">
-                <ThreeDots 
-                    height="80" 
-                    width="80" 
+                <ThreeDots
+                    height="80"
+                    width="80"
                     radius="9"
                     color="#00BFFF"
                     ariaLabel="three-dots-loading"
@@ -165,18 +165,18 @@ const MonthlyAttendance = () => {
                 <div className="d-flex justify-content-center">
                     <h2 className='monthlyattendance-heading'>Monthly Attendance for {new Date(currentDate.getFullYear(), parseInt(selectedMonth.split('-')[1], 10) - 1).toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}</h2>
                 </div>
-    
+
                 <div className="d-flex mt-3">
                     <label htmlFor="monthFilter" className="ms-3 me-2">Select Month:</label>
-                    <input 
-                        type="month" 
-                        id="monthFilter" 
-                        value={selectedMonth} 
-                        onChange={(e) => setSelectedMonth(e.target.value)} 
+                    <input
+                        type="month"
+                        id="monthFilter"
+                        value={selectedMonth}
+                        onChange={(e) => setSelectedMonth(e.target.value)}
                         max={maxMonth} // Disable future months
                     />
                 </div>
-    
+
                 <div className="table-responsive mt-3">
                     <table className="table table-striped">
                         <thead>
@@ -189,39 +189,39 @@ const MonthlyAttendance = () => {
                             </tr>
                         </thead>
                         <tbody>
-    {monthlyData.length > 0 ? (
-        monthlyData.map((user, index) => (
-            <tr key={index}>
-                <td>{user.name || 'N/A'}</td>
-                {user.dailyStatuses.map((status, dayIndex) => (
-                    <td 
-                    key={dayIndex} 
-                    style={{
-                        color: status === 'P' ? 'green' : status === 'A' ? 'red' : 'purple',fontWeight: 'bold',
-                        // Text color for better contrast
-                    }}
-                >
-                    {status}
-                </td>
-                ))}
-                <td>{user.totalPresent}</td>
-            </tr>
-        ))
-    ) : (
-        <tr>
-            <td colSpan={getMonthDates(currentDate.getFullYear(), parseInt(selectedMonth.split('-')[1], 10) - 1).length + 2}>
-                No data found
-            </td>
-        </tr>
-    )}
-</tbody>
+                            {monthlyData.length > 0 ? (
+                                monthlyData.map((user, index) => (
+                                    <tr key={index}>
+                                        <td>{user.name || 'N/A'}</td>
+                                        {user.dailyStatuses.map((status, dayIndex) => (
+                                            <td
+                                                key={dayIndex}
+                                                style={{
+                                                    color: status === 'P' ? 'green' : status === 'A' ? 'red' : 'purple', fontWeight: 'bold',
+                                                    // Text color for better contrast
+                                                }}
+                                            >
+                                                {status}
+                                            </td>
+                                        ))}
+                                        <td>{user.totalPresent}</td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={getMonthDates(currentDate.getFullYear(), parseInt(selectedMonth.split('-')[1], 10) - 1).length + 2}>
+                                        No data found
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
 
                     </table>
                 </div>
             </div>
         </div>
     );
-    
+
 };
 
 export default MonthlyAttendance;
