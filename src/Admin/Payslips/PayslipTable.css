@@ -1,0 +1,33 @@
+/* PayslipTable.css */
+.payslip-table {
+        margin: 20px 0;
+    }
+    
+    .payslip-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .payslip-table th, .payslip-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    
+    .payslip-table th {
+        background-color: #f2f2f2;
+    }
+    
+    .payslip-table button {
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .payslip-table button:hover {
+        background-color: #0056b3;
+    }
+    

@@ -16,3 +16,71 @@
 .admin-payslip-content.collapsed {
   margin-left: 60px; /* Adjust based on sidebar width */
 }
+
+
+
+.admin-payslip-content .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.admin-payslip-content .form-group {
+  flex: 1;
+  min-width: 200px; /* Adjust the minimum width as needed */
+  margin-right: 10px;
+}
+
+.admin-payslip-content .form-group:last-child {
+  margin-right: 0;
+}
+
+@media (max-width: 768px) {
+  .admin-payslip-content .form-row {
+      flex-direction: column;
+  }
+
+  .admin-payslip-content .form-group {
+      margin-right: 0;
+      margin-bottom: 15px;
+  }
+}
+
+
+
+
+
+
+
+.select-button {
+  appearance: none; /* Remove default arrow */
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white;
+  padding: 10px 15px; /* Add padding for better appearance */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.select-button:focus {
+  outline: none; /* Remove outline on focus */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a subtle shadow */
+}
+
+.select-button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: '▼'; /* Add a custom dropdown arrow */
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  color: white; /* Color of the arrow */
+  pointer-events: none; /* Make the arrow non-clickable */
+}
