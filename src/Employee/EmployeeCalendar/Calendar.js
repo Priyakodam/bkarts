@@ -9,12 +9,11 @@ import { Modal, Button } from 'react-bootstrap'; // Import Bootstrap Modal and B
 import "./Calendar.css";
 
 function formatDate(dateString) {
-  const date = new Date(dateString);
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const year = date.getFullYear();
-  return `${year}-${month}-${day}`;
+  // Split the date string by '-' and map to create a new date string in the format 'YYYY-MM-DD'
+  const [day, month, year] = dateString.split('-');
+  return `${year}-${month}-${day}`; // Convert to 'YYYY-MM-DD'
 }
+
 
 function Holidays() {
   const [holidays, setHolidays] = useState([]);
@@ -33,9 +32,10 @@ function Holidays() {
       const events = holidayList.map((holiday) => ({
         id: holiday.id,
         title: holiday.festival,
-        start: new Date(formatDate(holiday.date)),
-        end: new Date(formatDate(holiday.date)),
+        start: new Date(formatDate(holiday.date)), // Convert date format
+        end: new Date(formatDate(holiday.date)),   // Convert date format
       }));
+      
 
       setHolidays(events);
     };
