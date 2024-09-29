@@ -18,6 +18,7 @@ import AddHoliday from "./Admin/Calendar/Calendar";
 import Calendar from "./Employee/EmployeeCalendar/Calendar"
 import Holidays from "./Admin/Calendar/Holidaylist";
 import Payslips from "./Admin/Payslips/Payslips";
+import EmployeePayslipTable from "./Employee/Payslip/EmployeePayslip";
 
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ function App() {
       <Route path="/e-profile" element={<EmployeeProfile />} />
       <Route path="/edit-profile" element={<EditProfile />} />
       <Route path="/e-view-attendance" element={<ViewAttendance />} />
+      <Route path="/employee-payslip-table" element={<EmployeePayslipTable/>} />
       <Route path="/admin-attendance" element={<AdminAttendance />} />
       <Route path="/monthly-attendance" element={<MonthlyAttendance />} />
       <Route path="/a-calendar" element={<AddHoliday />} />

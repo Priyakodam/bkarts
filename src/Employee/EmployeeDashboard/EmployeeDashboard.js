@@ -49,6 +49,13 @@ const EmployeeDashboard = () => {
                         </Link>
                     </li>
 
+                    <li className={`nav-item ${location.pathname === '/employee-payslip-table' ? 'active' : ''}`}>
+                        <Link className="nav-link" to="/employee-payslip-table">
+                            <FaRegCalendarAlt className="nav-icon" />
+                            
+                        </Link>
+                    </li>
+
                     {/* <li className={`nav-item ${location.pathname === '/e-view-attendance' ? 'active' : ''}`}>
                         <Link className="nav-link" to="/e-view-attendance">
                             <FaCalendarCheck className="nav-icon" />
