@@ -289,7 +289,7 @@ const AttendanceTable = () => {
 
 {isModalOpen && (
                     <div className="custom-modal">
-                        <div className="modal-content">
+                        <div className="modal-content1">
                             <span className="close" onClick={closeModal}>&times;</span>
                             <h2>Details</h2>
                             <p><strong>Check-In Location:</strong> {selectedDetails.checkInLocation || 'N/A'}</p>
