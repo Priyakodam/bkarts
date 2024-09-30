@@ -9,8 +9,12 @@ import AdminDashboard from '../Dashboard/AdminDashboard';
 import "./Payslips.css"; // Import the PayslipPDF component from the new file
 import PayslipTable from './PayslipTable'; // Add this import at the top
 import { Modal, Button } from 'react-bootstrap'; // Import Bootstrap Modal components
+import { useNavigate} from "react-router-dom";
+
 
 const Payslips = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState(false);
     const [users, setUsers] = useState([]);
     const [attendanceData, setAttendanceData] = useState(null);
@@ -160,6 +164,7 @@ const Payslips = () => {
         }
 
         try {
+            setIsSubmitting(true);
             // Generate the PDF blob
             const blob = await pdf(
                 <PayslipPDF
@@ -173,11 +178,7 @@ const Payslips = () => {
             ).toBlob();
 
             // Download the PDF
-            const pdfURL = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = pdfURL;
-            link.download = `${selectedEmployee.name}_Payslip_${month}.pdf`;
-            link.click();
+            
 
             // Upload the PDF to Firebase Storage
             const storageRef = ref(storage, `payslips/${selectedEmployeeId}_${month}.pdf`);
@@ -221,12 +222,14 @@ const Payslips = () => {
             await setDoc(employeeDocRef, existingPayslips, { merge: true });
 
             // Set success message
-            setSuccessMessage('Payslip submitted successfully!');
-
+            alert('Payslip submitted successfully!');
+            setShowModal(false);
             
         } catch (error) {
             console.error('Error submitting payslip: ', error);
             alert('Failed to submit payslip. Please try again.');
+        } finally {
+            setIsSubmitting(false); // Re-enable the button after submission completes or fails
         }
     };
 
@@ -376,9 +379,9 @@ const Payslips = () => {
                                 <Button variant="secondary" onClick={handleCloseModal} className="me-2">
                                     Close
                                 </Button>
-                                <Button type="submit" variant="primary" disabled={!selectedEmployee}>
-                                    Generate Payslip
-                                </Button>
+                                <Button type="submit" variant="primary" disabled={isSubmitting || !selectedEmployee}>
+    {isSubmitting ? 'Generating...' : 'Generate Payslip'}
+</Button>
                             </div>
                         </form>
 
