@@ -174,7 +174,7 @@ function AddHoliday() {
               <tbody>
                 {currentHolidays.map((holiday) => (
                   <tr key={holiday.id}>
-                    <td>{holiday.date}</td> {/* Display date in DD-MM-YYYY format */}
+                    <td> {new Date(holiday.date).toLocaleDateString('en-IN')}</td> {/* Display date in DD-MM-YYYY format */}
                     <td>{holiday.day}</td>
                     <td>{holiday.festival}</td>
                     <td>
