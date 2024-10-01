@@ -119,34 +119,61 @@ const Payslips = () => {
         return hours + minutes / 60;
     };
 
-    const calculateAmountReceived = (amount, month) => {
+    const calculateAmountReceived = async (amount, month) => {
         if (amount && month && selectedEmployeeId) {
             const daysInMonth = new Date(new Date(month).getFullYear(), new Date(month).getMonth() + 1, 0).getDate();
             const employeeAttendance = attendanceData[selectedEmployeeId];
-
+            
             let totalHoursWorked = 0;
-
+            let sundayHours = 0;
+            let holidayHours = 0;
+    
+            // Calculate hours for attendance entries
             for (const date in employeeAttendance) {
                 const attendanceEntry = employeeAttendance[date];
                 if (attendanceEntry.statuses === 'Present' && attendanceEntry.duration) {
                     let hoursWorked = parseDuration(attendanceEntry.duration);
-
+    
                     if (hoursWorked > 9) {
-                        hoursWorked = 9;
+                        hoursWorked = 9; // Maximum 9 hours per day
                     }
-
+    
                     totalHoursWorked += hoursWorked;
                 }
             }
-
+    
+            // Calculate Sundays and treat each Sunday as a 9-hour workday
+            const selectedMonthYear = new Date(month);
+            for (let day = 1; day <= daysInMonth; day++) {
+                const currentDay = new Date(selectedMonthYear.getFullYear(), selectedMonthYear.getMonth(), day);
+                if (currentDay.getDay() === 0) { // 0 means Sunday
+                    sundayHours += 9; // Each Sunday is considered 9 hours
+                }
+            }
+    
+            // Fetch holidays for the selected month and count them as 9-hour workdays
+            const holidaysRef = collection(db, 'holidays');
+            const holidayQuery = query(holidaysRef, where('date', '>=', `${month}-01`), where('date', '<=', `${month}-${daysInMonth}`));
+            const holidaySnapshot = await getDocs(holidayQuery);
+    
+            holidaySnapshot.forEach(doc => {
+                const holidayData = doc.data();
+                if (holidayData && holidayData.date) {
+                    holidayHours += 9; // Each holiday is considered 9 hours
+                }
+            });
+    
+            // Add Sunday and holiday hours to totalHoursWorked
+            totalHoursWorked += sundayHours + holidayHours;
+    
             const dailyAmount = amount / daysInMonth;
             const hourlyRate = dailyAmount / 9;
             const calculatedAmount = hourlyRate * totalHoursWorked;
-
+    
             // Round to two decimal places
             const roundedAmountReceived = parseFloat(calculatedAmount.toFixed(2));
             const roundedDeductionAmount = parseFloat((amount - roundedAmountReceived).toFixed(2));
-
+    
             setAmountReceived(roundedAmountReceived);
             setDeductionAmount(roundedDeductionAmount);
         } else {
@@ -154,6 +181,7 @@ const Payslips = () => {
             setDeductionAmount(0);
         }
     };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
