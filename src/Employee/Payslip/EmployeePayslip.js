@@ -10,30 +10,41 @@ const EmployeePayslipTable = () => {
     const { user } = useAuth(); // Get current authenticated user
     const [loading, setLoading] = useState(true);
 
-    // Function to fetch payslips from Firestore based on user.uid
-    const fetchPayslips = async () => {
-        if (user && user.uid) {
+    // Function to fetch payslips based on the logged-in user's uid
+    const fetchPayslipData = async () => {
+        if (user && user.uid) {  // Ensure the user is authenticated and has a uid
             try {
-                const payslipRef = collection(db, 'payslips');
-                const q = query(payslipRef, where('2024-09.employeeId', '==', user.uid));
-                const querySnapshot = await getDocs(q);
+                const payslipCollection = collection(db, 'payslips');
+                const payslipDocRef = query(payslipCollection, where('__name__', '==', user.uid));  // Query to get the document with the ID that matches user.uid
+                
+                const payslipSnapshot = await getDocs(payslipDocRef);
 
-                const payslipData = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data()['2024-09'], // Accessing the nested '2024-09' data
-                }));
+                const payslipData = [];
 
-                setPayslips(payslipData);
-                setLoading(false);
+                payslipSnapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    // Iterate through all the months (keys) in the document
+                    for (const month in data) {
+                        if (data.hasOwnProperty(month)) {
+                            payslipData.push({
+                                id: doc.id,
+                                ...data[month], // Spread the payslip data for each month
+                            });
+                        }
+                    }
+                });
+
+                setPayslips(payslipData); // Set state with the fetched payslip data
+                setLoading(false); // Set loading to false after data is fetched
             } catch (error) {
-                console.error('Error fetching payslips:', error);
-                setLoading(false);
+                console.error('Error fetching payslip data: ', error);
+                setLoading(false); // Stop loading even on error
             }
         }
     };
 
     useEffect(() => {
-        fetchPayslips();
+        fetchPayslipData(); // Fetch payslip data when the component mounts or when the user changes
     }, [user]);
 
     return (
