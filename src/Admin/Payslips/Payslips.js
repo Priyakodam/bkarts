@@ -8,7 +8,7 @@ import PayslipPDF from './PayslipPDF';
 import AdminDashboard from '../Dashboard/AdminDashboard';
 import "./Payslips.css"; // Import the PayslipPDF component from the new file
 import PayslipTable from './PayslipTable'; // Add this import at the top
-import { Modal, Button } from 'react-bootstrap'; // Import Bootstrap Modal components
+import { Modal, Button,Alert } from 'react-bootstrap'; // Import Bootstrap Modal components
 import { useNavigate} from "react-router-dom";
 
 
@@ -27,6 +27,18 @@ const Payslips = () => {
     const [deductionAmount, setDeductionAmount] = useState(0);
     const [successMessage, setSuccessMessage] = useState('');
     const [showModal, setShowModal] = useState(false); // State to control modal visibility
+    const [alertVisible, setAlertVisible] = useState(false);
+
+
+    const getCurrentMonth = () => {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Adding 1 since months are 0-indexed
+        return `${year}-${month}`;
+    };
+
+    // Set the maxMonth to restrict input selection
+    const maxMonth = getCurrentMonth();
 
     const fetchUsers = async () => {
         const q = query(collection(db, 'users'), where('status', '==', 'Verified'));
@@ -74,9 +86,28 @@ const Payslips = () => {
         calculateAmountReceived(value, month);
     };
 
-    const handleMonthChange = (e) => {
+    const handleMonthChange = async (e) => {
         const selectedMonth = e.target.value;
         setMonth(selectedMonth);
+
+        // Check if a payslip already exists for the selected employee and month
+        if (selectedEmployeeId) {
+            const employeeDocRef = doc(db, 'payslips', selectedEmployeeId);
+            const employeeDocSnapshot = await getDoc(employeeDocRef);
+
+            if (employeeDocSnapshot.exists()) {
+                const existingPayslips = employeeDocSnapshot.data() || {};
+                if (existingPayslips[selectedMonth]) {
+                    setAlertVisible(true); // Show alert if payslip exists
+                } else {
+                    setAlertVisible(false); // Hide alert if payslip does not exist
+                }
+            } else {
+                setAlertVisible(false); // Hide alert if no payslips exist for employee
+            }
+        }
+
+        // Call your existing functions
         updatePresentCountForSelectedMonth(attendanceData[selectedEmployeeId]);
         calculateAmountReceived(amount, selectedMonth);
     };
@@ -185,14 +216,33 @@ const Payslips = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (!selectedEmployee || !month || !amount || amountReceived === 0) {
             alert('Please fill all fields.');
             return;
         }
-
+    
         try {
             setIsSubmitting(true);
+    
+            // Get reference to the employee's document in Firestore
+            const employeeDocRef = doc(db, 'payslips', selectedEmployeeId);
+    
+            // Fetch the existing payslip data for the employee
+            const employeeDocSnapshot = await getDoc(employeeDocRef);
+    
+            let existingPayslips = {};
+    
+            if (employeeDocSnapshot.exists()) {
+                existingPayslips = employeeDocSnapshot.data() || {};
+    
+                // Check if the payslip for the selected month already exists
+                if (existingPayslips[month]) {
+                    alert('You have already generated a payslip for this month.');
+                    return; // Exit early if the payslip exists
+                }
+            }
+    
             // Generate the PDF blob
             const blob = await pdf(
                 <PayslipPDF
@@ -204,17 +254,14 @@ const Payslips = () => {
                     deductionAmount={deductionAmount}
                 />
             ).toBlob();
-
-            // Download the PDF
-            
-
+    
             // Upload the PDF to Firebase Storage
             const storageRef = ref(storage, `payslips/${selectedEmployeeId}_${month}.pdf`);
             await uploadBytes(storageRef, blob);
-
+    
             // Get the download URL of the uploaded PDF
             const downloadURL = await getDownloadURL(storageRef);
-
+    
             // Define the payslip data
             const payslipData = {
                 employeeId: selectedEmployeeId,
@@ -230,25 +277,13 @@ const Payslips = () => {
                 createdAt: new Date(),
                 staffId: selectedEmployee.staffId,
             };
-
-            // Get reference to the employee's document in Firestore
-            const employeeDocRef = doc(db, 'payslips', selectedEmployeeId);
-
-            // Fetch the existing payslip data for the employee
-            const employeeDocSnapshot = await getDoc(employeeDocRef);
-
-            let existingPayslips = {};
-
-            if (employeeDocSnapshot.exists()) {
-                existingPayslips = employeeDocSnapshot.data() || {};
-            }
-
+    
             // Add the new payslip to the Firestore document under the month key
             existingPayslips[month] = payslipData;
-
+    
             // Update the Firestore document with the new payslip data directly under the month key
             await setDoc(employeeDocRef, existingPayslips, { merge: true });
-
+    
             // Set success message
             alert('Payslip submitted successfully!');
             setShowModal(false);
@@ -260,6 +295,7 @@ const Payslips = () => {
             setIsSubmitting(false); // Re-enable the button after submission completes or fails
         }
     };
+    
 
     // Function to reset all form fields and states
     const resetForm = () => {
@@ -270,12 +306,14 @@ const Payslips = () => {
         setAmountReceived(0);
         setDeductionAmount(0);
         setSuccessMessage('');
+        setAlertVisible(false);
     };
 
     // Handler for closing the modal which resets the form
     const handleCloseModal = () => {
         resetForm();
         setShowModal(false);
+        setAlertVisible(false);
     };
 
     return (
@@ -326,9 +364,16 @@ const Payslips = () => {
                                             className="form-control"
                                             value={month}
                                             onChange={handleMonthChange}
+                                            max={maxMonth}
                                             required
                                         />
                                     </div>
+
+                                    {alertVisible && (
+                        <Alert variant="warning" onClose={() => setAlertVisible(false)} dismissible>
+                            You have already generated a payslip for this month.
+                        </Alert>
+                    )}
                                             <div className="col-md-6">
                                                 <label htmlFor="employeeName" className="form-label">Employee Name:</label>
                                                 <input
