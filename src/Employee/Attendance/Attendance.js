@@ -5,7 +5,6 @@ import { db } from '../../FirebaseConfig/Firebaseconfig';
 import { doc, getDoc, updateDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import "./Attendance.css";
 import Map from "./Map";
-import { Modal, Button } from 'react-bootstrap'; // Assuming you're using Bootstrap for styling
 
 const Attendance = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -16,14 +15,10 @@ const Attendance = () => {
   const [checkOutPerformed, setCheckOutPerformed] = useState(false);
   const [isCheckingIn, setIsCheckingIn] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  
-  // New state for modal
-  const [showModal, setShowModal] = useState(false);
-  const [comment, setComment] = useState("");
 
   useEffect(() => {
     const attendanceRef = doc(db, 'attendance', user.uid);
-
+  
     const unsubscribe = onSnapshot(attendanceRef, (attendanceSnap) => {
       if (attendanceSnap.exists()) {
         setAttendanceData(attendanceSnap.data());
@@ -36,12 +31,13 @@ const Attendance = () => {
         setAttendanceData(null);
       }
     });
-
+  
     return () => unsubscribe();
   }, [user.uid]);
 
   const handleCheckIn = async () => {
     setIsCheckingIn(true);
+
     try {
       const uid = user.uid;
       const now = new Date();
@@ -67,6 +63,7 @@ const Attendance = () => {
 
   const handleCheckOut = async () => {
     setIsCheckingOut(true);
+
     try {
       const attendanceRef = doc(db, 'attendance', user.uid);
       const attendanceSnap = await getDoc(attendanceRef);
@@ -111,24 +108,6 @@ const Attendance = () => {
     }
   };
 
-  const handleRequest = async () => {
-    const uid = user.uid;
-    const today = formatDate(new Date());
-
-    try {
-      // Update attendance document with the comment
-      await updateDoc(doc(db, 'attendance', uid), {
-        [`${today}.request`]: comment, // Store the comment along with attendance data
-      });
-
-      alert("Request submitted successfully!");
-      setShowModal(false);
-      setComment("");
-    } catch (error) {
-      console.error("Error submitting request:", error);
-    }
-  };
-
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -151,20 +130,22 @@ const Attendance = () => {
 
           {attendanceData && attendanceData[today] ? (
             <>
-              <p><strong>Check-in Time:</strong> {attendanceData[today].checkInTime?.toDate()?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'N/A'}</p>
-              <p><strong>Check-in Location:</strong> {attendanceData[today].checkInLocation || 'N/A'}</p>
-              <p><strong>Check-out Time:</strong> {attendanceData[today].checkOutTime?.toDate()?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'N/A'}</p>
-              <p><strong>Check-out Location:</strong> {attendanceData[today].checkOutLocation || 'N/A'}</p>
+              <p>
+                <strong>Check-in Time:</strong> {attendanceData[today].checkInTime?.toDate()?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'N/A'}
+              </p>
+              <p>
+                <strong>Check-in Location:</strong> {attendanceData[today].checkInLocation || 'N/A'}
+              </p>
+              <p>
+                <strong>Check-out Time:</strong> {attendanceData[today].checkOutTime?.toDate()?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'N/A'}
+              </p>
+              <p>
+                <strong>Check-out Location:</strong> {attendanceData[today].checkOutLocation || 'N/A'}
+              </p>
             </>
           ) : (
             <p>No attendance data for today.</p>
           )}
-          {/* Request Button */}
-          <div className="attendance-buttons mt-3">
-            <button className="request-button btn btn-primary" onClick={() => setShowModal(true)}>
-              Request
-            </button>
-          </div>
 
           {/* Check-in Button */}
           {!checkInPerformed && (
@@ -185,39 +166,8 @@ const Attendance = () => {
           )}
 
           <Map onCheckIn={setAddress} />
-
-          
         </div>
       </div>
-
-      {/* Modal for comment input */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Submit a Request</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <form>
-            <div className="form-group">
-              <label htmlFor="comment">Comment</label>
-              <input
-                type="text"
-                className="form-control"
-                id="comment"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-              />
-            </div>
-          </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleRequest}>
-            Submit Request
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 };
