@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../FirebaseConfig/Firebaseconfig'; // Adjust the import path
-import { collection, getDocs, query, where, updateDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import AdminDashboard from '../Dashboard/AdminDashboard';
 import './AdminAttendance.css';
 import { FaArrowLeft, FaArrowRight, FaEye } from 'react-icons/fa';
@@ -20,13 +20,12 @@ const Attendance = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [entriesPerPage] = useState(5);
     const [showModal, setShowModal] = useState(false);
-    const [selectedUser, setSelectedUser] = useState(null); // Store selected user object
+    const [selectedComment, setSelectedComment] = useState('');
+    const [modalImage, setModalImage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [actionDisabled, setActionDisabled] = useState(false);
 
     const today = new Date();
 
-    // Function to format duration from seconds to 'xh ym zs'
     const formatDuration = (seconds) => {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
@@ -34,7 +33,6 @@ const Attendance = () => {
         return `${hours}h ${minutes}m ${secs}s`;
     };
 
-    // Function to format date as 'dd-mm-yyyy'
     const formatDateForKey = (date) => {
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -42,17 +40,18 @@ const Attendance = () => {
         return `${day}-${month}-${year}`;
     };
 
-    // Fetch verified users from Firestore
     const fetchUsers = async () => {
         try {
+            // Create a query to fetch users where status is 'verified'
             const q = query(collection(db, 'users'), where('status', '==', 'Verified'));
+
             const querySnapshot = await getDocs(q);
             const userData = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
 
-            // Sort users by creation time descending
+            // Sort by createdAt timestamp
             userData.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
 
             setUsers(userData);
@@ -61,7 +60,6 @@ const Attendance = () => {
         }
     };
 
-    // Fetch attendance data from Firestore
     const fetchAttendance = async () => {
         try {
             const querySnapshot = await getDocs(collection(db, 'attendance'));
@@ -75,7 +73,6 @@ const Attendance = () => {
         }
     };
 
-    // Initial data fetch
     useEffect(() => {
         fetchUsers();
         fetchAttendance();
@@ -83,14 +80,14 @@ const Attendance = () => {
 
     const todayKey = formatDateForKey(currentDate);
 
-    // Process attendance data for the current day
+    // Process the nested attendance data
     const processAttendanceData = () => {
         return attendanceData.map(doc => {
             const dateData = doc[todayKey] || {};
             return {
                 id: doc.id,
                 employeeName: dateData.employeeName || 'N/A',
-                checkInTime: dateData.checkInTime ? new Date(dateData.checkInTime.seconds * 1000) : null, // Store as Date object
+                checkInTime: dateData.checkInTime ? new Date(dateData.checkInTime.seconds * 1000).toLocaleTimeString() : 'N/A',
                 checkInLocation: dateData.checkInLocation || 'N/A',
                 checkInImageUrl: dateData.checkInImageUrl || null,
                 checkOutTime: dateData.checkOutTime ? new Date(dateData.checkOutTime.seconds * 1000).toLocaleTimeString() : 'N/A',
@@ -103,7 +100,6 @@ const Attendance = () => {
         });
     };
 
-    // Combine user data with attendance data
     const combinedData = users
         .filter(user => roleFilter === 'All' || user.role === roleFilter)
         .map(user => {
@@ -114,14 +110,12 @@ const Attendance = () => {
             };
         });
 
-    // Filter data based on search query
     const filteredData = combinedData.filter(user =>
         Object.keys(user).some(key =>
             String(user[key]).toLowerCase().includes(searchQuery.toLowerCase())
         )
     );
 
-    // Navigation handlers for date
     const handlePrevious = () => {
         const prevDate = new Date(currentDate);
         prevDate.setDate(currentDate.getDate() - 1);
@@ -130,7 +124,7 @@ const Attendance = () => {
 
     const handleNext = () => {
         const nextDate = new Date(currentDate);
-        nextDate.setDate(currentDate.getDate() + 1);
+        nextDate.setDate(nextDate.getDate() + 1);
         if (nextDate <= new Date()) {
             setCurrentDate(nextDate);
         }
@@ -138,7 +132,6 @@ const Attendance = () => {
 
     const isToday = formatDateForKey(currentDate) === formatDateForKey(today);
 
-    // Function to format date for PDF
     const formatDate = (date) => {
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -146,7 +139,6 @@ const Attendance = () => {
         return `${day}-${month}-${year}`;
     };
 
-    // Function to download attendance as PDF
     const handleDownloadPDF = () => {
         const doc = new jsPDF();
         doc.text(`Attendance Report - ${formatDate(currentDate)}`, 14, 10);
@@ -159,7 +151,7 @@ const Attendance = () => {
                 index + 1,
                 user.name || 'N/A',
                 user.role || 'N/A',
-                user.checkInTime ? user.checkInTime.toLocaleTimeString() : 'N/A',
+                user.checkInTime || 'N/A',
                 user.checkInLocation || 'N/A',
                 user.checkInImageUrl ? 'View Image' : 'N/A',
                 user.checkOutTime || 'N/A',
@@ -176,7 +168,6 @@ const Attendance = () => {
         doc.save(`Attendance_Report_${formatDate(currentDate)}.pdf`);
     };
 
-    // Pagination handler
     const handlePageClick = ({ selected }) => {
         setCurrentPage(selected);
     };
@@ -184,12 +175,11 @@ const Attendance = () => {
     const offset = currentPage * entriesPerPage;
     const paginatedData = filteredData.slice(offset, offset + entriesPerPage);
 
-    // Loading state for initial data fetch
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
-            await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate loading
+            await new Promise(resolve => setTimeout(resolve, 2000));
             setLoading(false);
         };
         fetchData();
@@ -212,144 +202,15 @@ const Attendance = () => {
         );
     }
 
-    // Function to open modal with selected user's comments
-    const handleShowModal = (user) => {
-        setSelectedUser(user);
+    const handleShowModal = (comment) => {
+        setSelectedComment(comment);
         setShowModal(true);
-        setActionDisabled(false); // Enable buttons when modal opens
     };
 
-    // Function to close modal
     const handleCloseModal = () => {
         setShowModal(false);
-        setSelectedUser(null);
-        setActionDisabled(false); // Reset button state when modal closes
+        setSelectedComment('');
     };
-
-    // Function to handle Accept action
-    const handleAccept = async () => {
-        if (!selectedUser) return;
-        setActionDisabled(true);
-    
-        const { checkInTime, checkInLocation, id } = selectedUser;
-    
-        if (!checkInTime) {
-            alert("Cannot accept. Check-in time is not available.");
-            setActionDisabled(false);
-            handleCloseModal();
-            return;
-        }
-    
-        // Calculate checkout time: check-in time + 9 hours
-        const checkoutDate = new Date(checkInTime);
-        checkoutDate.setHours(checkoutDate.getHours() + 9);
-    
-        const checkoutTime = checkoutDate.toLocaleTimeString();
-        const checkoutLocation = checkInLocation;
-    
-        // Calculate duration (9 hours) in terms of hours, minutes, and seconds
-        const totalSeconds = 9 * 3600; // 9 hours in seconds
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-    
-        const formattedDuration = `${hours}h ${minutes}m ${seconds}s`;
-    
-        // Update Firebase
-        try {
-            const attendanceDocRef = doc(db, 'attendance', id);
-            const todayKey = formatDateForKey(currentDate);
-    
-            // Prepare the updated data
-            const updatedData = {
-                [`${todayKey}.checkOutTime`]: checkoutDate, // Store as timestamp
-                [`${todayKey}.checkOutLocation`]: checkoutLocation,
-                [`${todayKey}.duration`]: formattedDuration, // Store as formatted string
-                [`${todayKey}.statuses`]: 'Present' // Update status to Present
-            };
-    
-            await updateDoc(attendanceDocRef, updatedData);
-    
-            // Update local state to reflect changes
-            const updatedAttendanceData = attendanceData.map(att => {
-                if (att.id === id) {
-                    const dateData = att[todayKey] || {};
-                    return {
-                        ...att,
-                        [todayKey]: {
-                            ...dateData,
-                            checkOutTime: checkoutDate,
-                            checkOutLocation: checkoutLocation,
-                            duration: formattedDuration, // Store formatted string in local state
-                            statuses: 'Present'
-                        }
-                    };
-                }
-                return att;
-            });
-    
-            setAttendanceData(updatedAttendanceData);
-    
-            handleCloseModal();
-            alert("request has been Accepted successfully!");
-        } catch (error) {
-            console.error("Error updating attendance data: ", error);
-            alert("Failed to accept the attendance.");
-            setActionDisabled(false);
-        }
-    };
-    
-
-    // Function to handle Reject action
-    const handleReject = async () => {
-        if (!selectedUser) return;
-        setActionDisabled(true);
-    
-        const { id } = selectedUser;
-    
-        // Update Firebase to set status as 'Absent' and other fields to 'N/A'
-        try {
-            const attendanceDocRef = doc(db, 'attendance', id);
-            const todayKey = formatDateForKey(currentDate);
-    
-            const updatedData = {
-                [`${todayKey}.statuses`]: 'Absent',
-                [`${todayKey}.checkOutTime`]: 'N/A',
-                [`${todayKey}.checkOutLocation`]: 'N/A',
-                [`${todayKey}.duration`]: 'N/A',
-            };
-    
-            await updateDoc(attendanceDocRef, updatedData);
-    
-            // Update local state to reflect changes
-            const updatedAttendanceData = attendanceData.map(att => {
-                if (att.id === id) {
-                    const dateData = att[todayKey] || {};
-                    return {
-                        ...att,
-                        [todayKey]: {
-                            ...dateData,
-                            statuses: 'Absent',
-                            checkOutTime: 'N/A',
-                            checkOutLocation: 'N/A',
-                            duration: 'N/A',
-                        }
-                    };
-                }
-                return att;
-            });
-    
-            setAttendanceData(updatedAttendanceData);
-    
-            handleCloseModal();
-            alert("request has been Rejected successfully!");
-        } catch (error) {
-            console.error("Error updating attendance data: ", error);
-            alert("Failed to reject the attendance.");
-            setActionDisabled(false);
-        }
-    };
-
     return (
         <div className='attendance-container'>
             <AdminDashboard onToggleSidebar={setCollapsed} />
@@ -373,7 +234,7 @@ const Attendance = () => {
                     </div>
                 </div>
 
-                <div className="filter-container d-flex mt-3">
+                <div className="filter-container d-flex  mt-3">
                     <div>
                         <input
                             type="text"
@@ -410,7 +271,7 @@ const Attendance = () => {
                                 <td>{offset + index + 1}</td>
                                 <td>{user.name || 'N/A'}</td>
                                 <td>{user.role || 'N/A'}</td>
-                                <td>{user.checkInTime ? new Date(user.checkInTime).toLocaleTimeString() : 'N/A'}</td>
+                                <td>{user.checkInTime || 'N/A'}</td>
                                 <td>{user.checkInLocation || 'N/A'}</td>
                                 {/* <td>
                                     {user.checkInImageUrl ? (
@@ -429,15 +290,13 @@ const Attendance = () => {
                                     ) : 'N/A'}
                                 </td> */}
                                 <td>{user.statuses || 'N/A'}</td>
-                                <td>{user.duration !== 'N/A' && typeof user.duration === 'number' ? formatDuration(user.duration) : user.duration}</td>
-                                <td>
-                                    <Button
-                                        variant="link"
-                                        onClick={() => handleShowModal(user)}
-                                    >
-                                        <FaEye /> {/* Eye icon */}
-                                    </Button>
-                                </td>
+                                <td>{user.duration || 'N/A'}</td>
+                                <td><Button
+                                    variant="link"
+                                    onClick={() => handleShowModal(user.requestComment || 'No comments')}
+                                >
+                                    <FaEye /> {/* Eye icon */}
+                                </Button></td>
                             </tr>
                         ))}
                     </tbody>
@@ -463,22 +322,32 @@ const Attendance = () => {
                     activeClassName={"active"}
                 />
 
-                {/* Modal for displaying comments with Accept and Reject buttons */}
+
+                {showModal && (
+                    <div className="modal">
+                        <div className="modal-content">
+                            <span className="close" onClick={() => setShowModal(false)}>&times;</span>
+                            {isLoading && <ThreeDots height="80" width="80" radius="9" color="#00BFFF" ariaLabel="three-dots-loading" />}
+                            <img
+                                src={modalImage}
+                                alt="Attendance"
+                                className="modal-image"
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {/* Modal for displaying comments */}
                 <Modal show={showModal} onHide={handleCloseModal}>
                     <Modal.Header closeButton>
                         <Modal.Title>Comments</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>
-                        <p>{selectedUser?.requestComment || 'No comments'}</p>
-                    </Modal.Body>
+                    <Modal.Body>{selectedComment}</Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={handleCloseModal}>
-                            Close
-                        </Button>
-                        <Button variant="success" onClick={handleAccept}>
+                        <Button variant="success" >
                             Accept
                         </Button>
-                        <Button variant="danger" onClick={handleReject}>
+                        <Button variant="danger" >
                             Reject
                         </Button>
                     </Modal.Footer>

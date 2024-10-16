@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../Context/AuthContext';
 import { db } from '../../FirebaseConfig/Firebaseconfig';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import EmployeeDashboard from '../EmployeeDashboard/EmployeeDashboard';
 import { Pagination } from 'react-bootstrap';
 import './ViewAttendance.css';
+import './RequestModal.css';
+import { faEye, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 // Utility function to get the start date of the week
@@ -25,8 +28,10 @@ const AttendanceTable = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
     const [selectedDetails, setSelectedDetails] = useState({});
+    const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
     const [currentWeekStartDate, setCurrentWeekStartDate] = useState(getWeekStartDate(new Date()));
-
+    const [requestComment, setRequestComment] = useState('');
+    const [selectedRecord, setSelectedRecord] = useState(null);
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const recordsPerPage = 5; // Number of records per page
@@ -113,11 +118,11 @@ const AttendanceTable = () => {
             console.error('formatDate expects a string or Date object');
             return ''; // Return an empty string or handle the error as needed
         }
-    
+
         const [year, month, day] = dateString.split('-');
         return `${day}-${month}-${year}`;
     }
-    
+
 
     const handlePreviousWeek = () => {
         const newStartDate = new Date(currentWeekStartDate);
@@ -127,12 +132,12 @@ const AttendanceTable = () => {
 
     const handleNextWeek = () => {
         if (nextWeekDisabled) return; // Do nothing if next week is disabled
-    
+
         const newStartDate = new Date(currentWeekStartDate);
         newStartDate.setDate(newStartDate.getDate() + 7);
         setCurrentWeekStartDate(getWeekStartDate(newStartDate));
     };
-    
+
 
     const renderPagination = () => {
         let startPage = Math.max(1, currentPage - Math.floor(maxButtonsToShow / 2));
@@ -180,7 +185,7 @@ const AttendanceTable = () => {
 
 
     const openModal = (data) => {
-        console.log('Selected details:', data); 
+        console.log('Selected details:', data);
         setSelectedDetails(data);
         setIsModalOpen(true);
     };
@@ -190,34 +195,63 @@ const AttendanceTable = () => {
         setIsModalOpen(false);
         setSelectedDetails({});
     };
-    
+
+    const openRequestModal = (record) => {
+        setSelectedRecord(record);
+        setIsRequestModalOpen(true);
+    };
+
+    const closeRequestModal = () => {
+        setIsRequestModalOpen(false);
+        setRequestComment('');
+    };
+
+    const handleRequestSubmit = async () => {
+        if (!selectedRecord || !user) return;
+        try {
+            const attendanceRef = doc(db, 'attendance', user.uid);
+            await updateDoc(attendanceRef, {
+                [`${selectedRecord.date}.requestComment`]: requestComment,
+            });
+            setAttendanceData((prevData) =>
+                prevData.map((item) =>
+                    item.date === selectedRecord.date ? { ...item, requestComment } : item
+                )
+            );
+            closeRequestModal();
+            
+            alert("Your request has been submitted successfully!");
+        } catch (error) {
+            console.error('Error saving request comment:', error);
+        }
+    };
 
     return (
         <div className='view-attendance-container'>
             <EmployeeDashboard onToggleSidebar={setCollapsed} />
             <div className={`view-attendance-content ${collapsed ? 'collapsed' : ''}`}>
-            <div className="navigation-buttons d-flex align-items-center">
-    <FaArrowLeft 
-        onClick={handlePreviousWeek} 
-        style={{ cursor: 'pointer' }} 
-        size={24} 
-    />
-    &nbsp; &nbsp;
-    <h2 className='attendance-heading'>
-        Attendance for {formatDate(currentWeekStartDate)} to{' '}
-        {formatDate(new Date(currentWeekStartDate.getTime() + 6 * 24 * 60 * 60 * 1000))}
-    </h2>
-    &nbsp; &nbsp;
-    <FaArrowRight 
-        onClick={handleNextWeek} 
-        style={{ 
-            cursor: nextWeekDisabled ? 'not-allowed' : 'pointer', 
-            color: nextWeekDisabled ? 'gray' : 'inherit' 
-        }} 
-        size={24} 
-        disabled={nextWeekDisabled} 
-    />
-</div>
+                <div className="navigation-buttons d-flex align-items-center">
+                    <FaArrowLeft
+                        onClick={handlePreviousWeek}
+                        style={{ cursor: 'pointer' }}
+                        size={24}
+                    />
+                    &nbsp; &nbsp;
+                    <h2 className='attendance-heading'>
+                        Attendance for {formatDate(currentWeekStartDate)} to{' '}
+                        {formatDate(new Date(currentWeekStartDate.getTime() + 6 * 24 * 60 * 60 * 1000))}
+                    </h2>
+                    &nbsp; &nbsp;
+                    <FaArrowRight
+                        onClick={handleNextWeek}
+                        style={{
+                            cursor: nextWeekDisabled ? 'not-allowed' : 'pointer',
+                            color: nextWeekDisabled ? 'gray' : 'inherit'
+                        }}
+                        size={24}
+                        disabled={nextWeekDisabled}
+                    />
+                </div>
 
 
                 {loading ? (
@@ -227,7 +261,7 @@ const AttendanceTable = () => {
                 ) : (
                     <>
                         <div className="table-responsive mt-3">
-                        <table className="table table-striped mt-3">
+                            <table className="table table-striped mt-3">
                                 <thead>
                                     <tr className='td'>
                                         <th>S.No</th>
@@ -236,7 +270,7 @@ const AttendanceTable = () => {
                                         <th>Check-Out</th>
                                         <th>Duration</th>
                                         <th>Status</th>
-                                        <th>View Details</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -265,8 +299,14 @@ const AttendanceTable = () => {
                                                 </td>
                                                 <td>
                                                     <button className="btn btn-primary" onClick={() => openModal(data)}>
-                                                        View
+                                                        <FontAwesomeIcon icon={faEye} />
                                                     </button>
+                                                    <FontAwesomeIcon
+                                                        icon={faPaperPlane}
+                                                        style={{ cursor: 'pointer' }}
+                                                        onClick={() => openRequestModal(data)}
+                                                        title="Request"
+                                                    />
                                                 </td>
                                             </tr>
                                         ))
@@ -287,22 +327,38 @@ const AttendanceTable = () => {
                     </>
                 )}
 
-{isModalOpen && (
+                {isModalOpen && (
                     <div className="custom-modal">
                         <div className="modal-content1">
                             <span className="close" onClick={closeModal}>&times;</span>
                             <h2>Details</h2>
                             <p><strong>Check-In Location:</strong> {selectedDetails.checkInLocation || 'N/A'}</p>
                             <p><strong>Check-Out Location:</strong> {selectedDetails.checkOutLocation || 'N/A'}</p>
-                            {/* <p><strong>Check-In Image: </strong>
-<a href={selectedDetails.checkInImageUrl} target="_blank" rel="noopener noreferrer" className="checkin-image-link"
-style={{textDecoration:"none"}}>
-                View Image
-              </a></p> */}
-              {/* <p><strong>Check-Out Image: </strong>
-<a href={selectedDetails.checkOutImageUrl} target="_blank" rel="noopener noreferrer" className="checkin-image-link" style={{textDecoration:"none"}}>
-                View Image
-              </a></p> */}
+
+                        </div>
+                    </div>
+                )}
+                {isRequestModalOpen && (
+
+
+                    <div className="custom-modal">
+                        <div className="modal-content">
+                            {/* <span className="close" onClick={onClose}>&times;</span> */}
+                            <h2>Request</h2>
+                            <div className="form-group">
+                                <label htmlFor="comment">Comments:</label>
+                                <textarea
+                                    id="comment"
+                                    className="form-control"
+                                    value={requestComment}
+                                    onChange={(e) => setRequestComment(e.target.value)}
+                                    placeholder="Enter your comment here"
+                                />
+                            </div>
+                            <div className="modal-actions">
+                                <button className="btn btn-primary" onClick={handleRequestSubmit}>Submit</button>
+                                <button className="btn btn-secondary" onClick={closeRequestModal}>Cancel</button>
+                            </div>
                         </div>
                     </div>
                 )}
