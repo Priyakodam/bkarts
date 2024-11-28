@@ -28,7 +28,7 @@ const Login = () => {
     try {
       if (email === 'admin@gmail.com' && password === 'Admin@123') {
         await signInWithEmailAndPassword(auth, email, password);
-        navigate('/staff'); 
+        navigate('/a-dashboard'); 
       } else {
         setErrorMsg('Invalid email or password. Please try again.');
       }
